@@ -1,7 +1,8 @@
 import { Chip } from '@/components/ui/chip';
-import { OraaColors, Radii, Shadows } from '@/constants/theme';
+import { Shadows } from '@/constants/theme';
+import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
@@ -61,7 +62,6 @@ interface MarqueeRowProps {
 
 function MarqueeRow({ topics, direction, duration, opacity = 1 }: MarqueeRowProps) {
   const translateX = useSharedValue(0);
-  const trackWidth = useRef(0);
   
   // Estimate track width based on topics
   const estimatedWidth = topics.reduce((acc, t) => acc + t.label.length * 8 + 34, 0);
@@ -97,36 +97,34 @@ function MarqueeRow({ topics, direction, duration, opacity = 1 }: MarqueeRowProp
   );
 }
 
+// Gradient mask element - fades content at edges
+function FadeMask() {
+  return (
+    <LinearGradient
+      colors={['transparent', 'black', 'black', 'transparent']}
+      locations={[0, 0.14, 0.86, 1]}
+      start={{ x: 0, y: 0.5 }}
+      end={{ x: 1, y: 0.5 }}
+      style={StyleSheet.absoluteFill}
+    />
+  );
+}
+
 export function TopicCloud() {
   return (
-    <View style={styles.container}>
-      {/* Background glow */}
-      <View style={styles.glowOverlay} />
-      
-      {/* Marquee rows */}
-      <MarqueeRow topics={ROW_1_TOPICS} direction="left" duration={85} />
-      <MarqueeRow topics={ROW_2_TOPICS} direction="right" duration={110} />
-      <MarqueeRow topics={ROW_3_TOPICS} direction="left" duration={140} opacity={0.96} />
-      
-      {/* Edge fade gradients - Left */}
-      <LinearGradient
-        colors={[OraaColors.bg, 'rgba(7,10,16,0.85)', 'transparent']}
-        locations={[0, 0.5, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={styles.fadeLeft}
+    <View style={styles.container} pointerEvents="box-none">
+      {/* Masked viewport - fades the content itself, not an overlay */}
+      <MaskedView
+        style={styles.maskedView}
+        maskElement={<FadeMask />}
         pointerEvents="none"
-      />
-      
-      {/* Edge fade gradients - Right */}
-      <LinearGradient
-        colors={['transparent', 'rgba(7,10,16,0.85)', OraaColors.bg]}
-        locations={[0, 0.5, 1]}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        style={styles.fadeRight}
-        pointerEvents="none"
-      />
+      >
+        <View style={styles.viewport}>
+          <MarqueeRow topics={ROW_1_TOPICS} direction="left" duration={85} />
+          <MarqueeRow topics={ROW_2_TOPICS} direction="right" duration={110} />
+          <MarqueeRow topics={ROW_3_TOPICS} direction="left" duration={140} opacity={0.96} />
+        </View>
+      </MaskedView>
     </View>
   );
 }
@@ -135,43 +133,26 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 16,
     marginBottom: 10,
-    borderRadius: Radii.xxl,
-    paddingVertical: 10,
-    backgroundColor: OraaColors.surfaceHover,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.04)',
     borderWidth: 1,
-    borderColor: OraaColors.surfaceLight,
+    borderColor: 'rgba(255,255,255,0.10)',
     overflow: 'hidden',
-    position: 'relative',
     ...Shadows.soft,
   },
-  glowOverlay: {
-    position: 'absolute',
-    top: -40,
-    left: -40,
-    right: -40,
-    bottom: -40,
-    opacity: 0.85,
+  maskedView: {
+    borderRadius: 28,
+    overflow: 'hidden',
+  },
+  viewport: {
+    paddingVertical: 10,
+    borderRadius: 28,
+    overflow: 'hidden',
   },
   marquee: {
     flexDirection: 'row',
     gap: 10,
     paddingVertical: 6,
-    paddingHorizontal: 14,
-  },
-  fadeLeft: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    width: 70,
-    zIndex: 10,
-  },
-  fadeRight: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    right: 0,
-    width: 70,
-    zIndex: 10,
+    paddingHorizontal: 16,
   },
 });
