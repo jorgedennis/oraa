@@ -1,14 +1,15 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated';
 import { Chip } from '@/components/ui/chip';
 import { OraaColors, Radii, Shadows } from '@/constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 
 // Topic data for each row
 const ROW_1_TOPICS = [
@@ -107,9 +108,25 @@ export function TopicCloud() {
       <MarqueeRow topics={ROW_2_TOPICS} direction="right" duration={110} />
       <MarqueeRow topics={ROW_3_TOPICS} direction="left" duration={140} opacity={0.96} />
       
-      {/* Edge fade gradients */}
-      <View style={styles.fadeLeft} pointerEvents="none" />
-      <View style={styles.fadeRight} pointerEvents="none" />
+      {/* Edge fade gradients - Left */}
+      <LinearGradient
+        colors={[OraaColors.bg, 'rgba(7,10,16,0.85)', 'transparent']}
+        locations={[0, 0.5, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={styles.fadeLeft}
+        pointerEvents="none"
+      />
+      
+      {/* Edge fade gradients - Right */}
+      <LinearGradient
+        colors={['transparent', 'rgba(7,10,16,0.85)', OraaColors.bg]}
+        locations={[0, 0.5, 1]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={styles.fadeRight}
+        pointerEvents="none"
+      />
     </View>
   );
 }
@@ -146,18 +163,15 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     left: 0,
-    width: 60,
-    backgroundColor: OraaColors.bg,
-    opacity: 0.92,
+    width: 70,
+    zIndex: 10,
   },
   fadeRight: {
     position: 'absolute',
     top: 0,
     bottom: 0,
     right: 0,
-    width: 60,
-    backgroundColor: OraaColors.bg,
-    opacity: 0.92,
+    width: 70,
+    zIndex: 10,
   },
 });
-
