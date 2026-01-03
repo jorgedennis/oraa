@@ -1,16 +1,16 @@
 import { useRouter } from 'expo-router';
 import { LandingScreen } from '@/components/screens/landing-screen';
 
-export default function HomeScreen() {
+export default function LandingPage() {
   const router = useRouter();
   
   const handleContinueAnonymously = () => {
-    router.push('/chat');
+    router.replace('/(drawer)/chat');
   };
   
   const handleCreateAccount = () => {
     // TODO: Implement account creation flow
-    router.push('/chat');
+    router.replace('/(drawer)/chat');
   };
   
   return (
@@ -20,3 +20,4 @@ export default function HomeScreen() {
     />
   );
 }
+

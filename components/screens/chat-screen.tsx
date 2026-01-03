@@ -3,12 +3,18 @@ import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform } from 'reac
 import { ChatHeader } from '@/components/chat/chat-header';
 import { ChatBubble, TypingIndicator } from '@/components/chat/chat-bubble';
 import { ChatInput } from '@/components/chat/chat-input';
+import { ThreadIndicator } from '@/components/chat/thread-indicator';
 import { OraaColors } from '@/constants/theme';
 
 interface Message {
   id: string;
   text: string;
   isUser: boolean;
+}
+
+interface ActiveThread {
+  id: string;
+  title: string;
 }
 
 // Demo messages from the HTML template
@@ -40,16 +46,28 @@ const DEMO_MESSAGES: Message[] = [
   },
 ];
 
+// Demo active thread
+const DEMO_THREAD: ActiveThread = {
+  id: '1',
+  title: 'Career transition anxiety',
+};
+
 interface ChatScreenProps {
   onSave?: () => void;
+  onMenuPress?: () => void;
+  onThreadPress?: (threadId: string) => void;
   messageLimit?: number;
   initialMessages?: Message[];
+  activeThread?: ActiveThread | null;
 }
 
 export function ChatScreen({
   onSave,
+  onMenuPress,
+  onThreadPress,
   messageLimit = 40,
   initialMessages = DEMO_MESSAGES,
+  activeThread = DEMO_THREAD,
 }: ChatScreenProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isTyping, setIsTyping] = useState(true);
@@ -71,6 +89,12 @@ export function ChatScreen({
     
     // Simulate AI typing
     setIsTyping(true);
+  };
+  
+  const handleThreadPress = () => {
+    if (activeThread && onThreadPress) {
+      onThreadPress(activeThread.id);
+    }
   };
   
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
@@ -100,7 +124,16 @@ export function ChatScreen({
         messageCount={messages.length}
         maxMessages={messageLimit}
         onSave={onSave}
+        onMenuPress={onMenuPress}
       />
+      
+      {/* Thread indicator */}
+      {activeThread && (
+        <ThreadIndicator
+          threadTitle={activeThread.title}
+          onPress={handleThreadPress}
+        />
+      )}
       
       <FlatList
         ref={flatListRef}
@@ -145,4 +178,3 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
 });
-

@@ -1,18 +1,22 @@
-import { useRouter } from 'expo-router';
 import { ChatScreen } from '@/components/screens/chat-screen';
+import { useNavigation, DrawerActions } from '@react-navigation/native';
 
 export default function ChatPage() {
-  const router = useRouter();
+  const navigation = useNavigation();
   
   const handleSave = () => {
-    // TODO: Implement save functionality
     console.log('Save conversation');
+  };
+  
+  const openDrawer = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
   };
   
   return (
     <ChatScreen
       onSave={handleSave}
       messageLimit={40}
+      onMenuPress={openDrawer}
     />
   );
 }

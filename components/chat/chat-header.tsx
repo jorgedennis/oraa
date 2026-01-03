@@ -10,6 +10,7 @@ interface ChatHeaderProps {
   messageCount?: number;
   maxMessages?: number;
   onSave?: () => void;
+  onMenuPress?: () => void;
 }
 
 export function ChatHeader({
@@ -18,14 +19,26 @@ export function ChatHeader({
   messageCount,
   maxMessages,
   onSave,
+  onMenuPress,
 }: ChatHeaderProps) {
   const insets = useSafeAreaInsets();
   
   return (
     <View style={[styles.container, { paddingTop: insets.top + 12 }]}>
       <View style={styles.row}>
-        {/* Left side - Avatar and title */}
+        {/* Left side - Menu button, Avatar and title */}
         <View style={styles.left}>
+          {onMenuPress && (
+            <TouchableOpacity 
+              style={styles.menuButton} 
+              onPress={onMenuPress}
+              activeOpacity={0.7}
+            >
+              <View style={styles.menuLine} />
+              <View style={[styles.menuLine, styles.menuLineShort]} />
+              <View style={styles.menuLine} />
+            </TouchableOpacity>
+          )}
           <View style={styles.avatar}>
             <View style={styles.avatarDot} />
           </View>
@@ -68,7 +81,23 @@ const styles = StyleSheet.create({
   left: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
+  },
+  menuButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    gap: 5,
+  },
+  menuLine: {
+    width: 20,
+    height: 2,
+    backgroundColor: OraaColors.textSub,
+    borderRadius: 1,
+  },
+  menuLineShort: {
+    width: 14,
   },
   avatar: {
     width: 26,
@@ -117,4 +146,3 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.72)',
   },
 });
-
