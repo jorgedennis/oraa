@@ -1,0 +1,1 @@
+const API_URL = 'https://n8n.srv1244885.hstgr.cloud/webhook'

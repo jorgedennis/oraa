@@ -6,6 +6,7 @@ import Animated, {
   withTiming,
   withDelay,
   withSequence,
+  withRepeat,
   Easing,
   interpolate,
 } from 'react-native-reanimated';
@@ -32,6 +33,8 @@ const DOT_POSITIONS = [
 const DOT_RADIUS = 2.55;
 const CENTER_RADIUS = 3.4;
 const ANIMATION_DURATION = 3000;
+const SETTLE_DURATION = 5000;
+const SCATTER_DURATION = 800;
 
 interface DotProps {
   index: number;
@@ -122,10 +125,27 @@ export function OraaLogo({ size = 140, animated = true }: OraaLogoProps) {
   
   useEffect(() => {
     if (animated) {
-      progress.value = withTiming(1, {
-        duration: ANIMATION_DURATION,
-        easing: Easing.bezier(0.4, 0, 0.2, 1),
-      });
+      // Animation sequence: resolve → hold → scatter → repeat
+      progress.value = withRepeat(
+        withSequence(
+          // Resolve: dots converge to constellation (3s)
+          withTiming(1, {
+            duration: ANIMATION_DURATION,
+            easing: Easing.bezier(0.4, 0, 0.2, 1),
+          }),
+          // Hold: stay settled (5s)
+          withDelay(SETTLE_DURATION, withTiming(1, { duration: 0 })),
+          // Scatter: dots disperse back (0.8s)
+          withTiming(0, {
+            duration: SCATTER_DURATION,
+            easing: Easing.bezier(0.4, 0, 0.6, 1),
+          }),
+          // Brief pause before repeating
+          withDelay(500, withTiming(0, { duration: 0 }))
+        ),
+        -1, // Repeat infinitely
+        false // Don't reverse
+      );
     }
   }, [animated]);
   

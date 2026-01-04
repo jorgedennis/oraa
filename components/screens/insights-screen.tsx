@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { InsightCard } from '@/components/insights/insight-card';
 import { ThreadSuggestion } from '@/components/insights/thread-suggestion';
-import { OraaColors } from '@/constants/theme';
+import { AcknowledgedInsight } from '@/components/insights/acknowledged-insight';
+import { OraaColors, Radii } from '@/constants/theme';
 
-// Mock data for insights
+// Mock data for pending insights
 const PENDING_INSIGHTS = [
   {
     id: '1',
@@ -40,9 +41,52 @@ const THREAD_SUGGESTIONS = [
   },
 ];
 
+// Mock data for acknowledged insights
+const ACKNOWLEDGED_INSIGHTS = [
+  {
+    id: 'a1',
+    observation: 'You process experiences internally before sharing them. There\'s a rich inner world here, sometimes at odds with what you show externally.',
+    domain: 'Inner',
+    response: 'yes' as const,
+    date: 'Dec 28',
+  },
+  {
+    id: 'a2',
+    observation: 'Stress manifests physically before you consciously recognize it—tight chest, shallow breathing.',
+    domain: 'Embodied',
+    response: 'yes' as const,
+    note: 'Yes, especially in my shoulders. I notice it after the fact usually.',
+    date: 'Dec 27',
+  },
+  {
+    id: 'a3',
+    observation: 'You compare your behind-the-scenes to others\' highlight reels, especially at work.',
+    domain: 'Performing',
+    response: 'maybe' as const,
+    note: 'Sometimes, but I think I\'m getting better at catching myself.',
+    date: 'Dec 25',
+  },
+  {
+    id: 'a4',
+    observation: 'Anger is the hardest emotion for you to express directly.',
+    domain: 'Emotional',
+    response: 'no' as const,
+    note: 'Actually I think it\'s sadness that\'s harder for me.',
+    date: 'Dec 22',
+  },
+  {
+    id: 'a5',
+    observation: 'You feel responsible for other people\'s emotional states, especially family members.',
+    domain: 'Relational',
+    response: 'yes' as const,
+    date: 'Dec 20',
+  },
+];
+
 export function InsightsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const [showHistory, setShowHistory] = useState(false);
   
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer());
@@ -142,6 +186,41 @@ export function InsightsScreen() {
             </Text>
           </View>
         )}
+        
+        {/* Previously Acknowledged Section */}
+        {ACKNOWLEDGED_INSIGHTS.length > 0 && (
+          <View style={styles.section}>
+            <TouchableOpacity 
+              style={styles.sectionHeader}
+              onPress={() => setShowHistory(!showHistory)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.sectionTitle}>📋 Previously Acknowledged</Text>
+              <Text style={styles.expandIcon}>{showHistory ? '−' : '+'}</Text>
+            </TouchableOpacity>
+            
+            {showHistory && (
+              <View style={styles.historyList}>
+                {ACKNOWLEDGED_INSIGHTS.map((insight) => (
+                  <AcknowledgedInsight
+                    key={insight.id}
+                    observation={insight.observation}
+                    domain={insight.domain}
+                    response={insight.response}
+                    note={insight.note}
+                    date={insight.date}
+                  />
+                ))}
+              </View>
+            )}
+            
+            {!showHistory && (
+              <Text style={styles.historyHint}>
+                {ACKNOWLEDGED_INSIGHTS.length} insights reviewed • Tap to expand
+              </Text>
+            )}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -204,14 +283,37 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 28,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
     color: OraaColors.text,
-    marginBottom: 14,
+  },
+  expandIcon: {
+    fontSize: 20,
+    color: OraaColors.textMuted,
+    fontWeight: '300',
   },
   cardList: {
     gap: 14,
+  },
+  historyList: {
+    gap: 10,
+  },
+  historyHint: {
+    fontSize: 13,
+    color: OraaColors.textMuted,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    backgroundColor: OraaColors.surfaceSubtle,
+    borderRadius: Radii.md,
+    borderWidth: 1,
+    borderColor: OraaColors.stroke,
   },
   emptyState: {
     alignItems: 'center',
@@ -233,4 +335,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-

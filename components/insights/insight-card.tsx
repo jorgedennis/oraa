@@ -27,11 +27,19 @@ export function InsightCard({ id, observation, domain, onRespond }: InsightCardP
   };
   
   if (responded) {
+    const responseLabels = {
+      yes: 'Agreed',
+      maybe: 'Noted with context',
+      no: 'Disagreed',
+    };
+    
     return (
       <View style={[styles.container, styles.containerResponded]}>
         <View style={styles.respondedContent}>
           <Text style={styles.checkmark}>✓</Text>
-          <Text style={styles.respondedText}>Added to your Map</Text>
+          <Text style={styles.respondedText}>
+            {selectedResponse ? responseLabels[selectedResponse] : 'Noted'}
+          </Text>
         </View>
       </View>
     );
