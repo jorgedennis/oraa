@@ -1,9 +1,11 @@
 import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { OraaColors } from '@/constants/theme';
+import { useAuthStore } from '@/store';
 
 // Custom dark theme for Oraa
 const OraaDarkTheme = {
@@ -19,6 +21,12 @@ const OraaDarkTheme = {
 };
 
 export default function RootLayout() {
+  const initialize = useAuthStore(state => state.initialize);
+  
+  useEffect(() => {
+    initialize();
+  }, []);
+  
   return (
     <ThemeProvider value={OraaDarkTheme}>
       <Stack screenOptions={{ headerShown: false }}>

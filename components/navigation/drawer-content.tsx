@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DrawerContentScrollView, DrawerContentComponentProps } from '@react-navigation/drawer';
 import { useRouter, usePathname } from 'expo-router';
-import { OraaLogoStatic } from '@/components/oraa-logo';
 import { OraaColors, Radii } from '@/constants/theme';
+import { useConversationsStore, Conversation } from '@/store';
 
 interface DrawerItemProps {
   icon: string;
@@ -36,8 +36,52 @@ function DrawerItem({ icon, label, route, isActive, onPress }: DrawerItemProps) 
   );
 }
 
+interface ConversationItemProps {
+  conversation: Conversation;
+  isActive: boolean;
+  onPress: () => void;
+}
+
+function ConversationItem({ conversation, isActive, onPress }: ConversationItemProps) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+  
+  return (
+    <TouchableOpacity
+      style={[styles.conversationItem, isActive && styles.conversationItemActive]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <Text style={styles.conversationIcon}>📝</Text>
+      <View style={styles.conversationContent}>
+        <Text 
+          style={[styles.conversationPreview, isActive && styles.conversationPreviewActive]}
+          numberOfLines={1}
+        >
+          {conversation.preview || 'Untitled conversation'}
+        </Text>
+        <Text style={styles.conversationMeta}>
+          {formatDate(conversation.started_at)} • {conversation.message_count} msgs
+        </Text>
+      </View>
+      {isActive && <View style={styles.conversationActiveIndicator} />}
+    </TouchableOpacity>
+  );
+}
+
 const DRAWER_ITEMS = [
-  { icon: '💬', label: 'Chat', route: '/(drawer)/chat' },
   { icon: '🗺️', label: 'Map', route: '/(drawer)/map' },
   { icon: '✨', label: 'Insights', route: '/(drawer)/insights' },
   { icon: '🧵', label: 'Threads', route: '/(drawer)/threads' },
@@ -48,6 +92,25 @@ export function DrawerContent(props: DrawerContentComponentProps) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const pathname = usePathname();
+  const [chatExpanded, setChatExpanded] = useState(false);
+  
+  const { 
+    conversations, 
+    isLoading, 
+    currentConversationId,
+    fetchConversations, 
+    selectConversation 
+  } = useConversationsStore();
+  
+  const isChatScreen = pathname.startsWith('/(drawer)/chat');
+  
+  // Auto-expand when on chat screen
+  useEffect(() => {
+    if (isChatScreen) {
+      setChatExpanded(true);
+      fetchConversations();
+    }
+  }, [isChatScreen]);
   
   const navigateTo = (route: string) => {
     router.push(route as any);
@@ -57,6 +120,31 @@ export function DrawerContent(props: DrawerContentComponentProps) {
   const isRouteActive = (route: string) => {
     return pathname.startsWith(route.replace('/(drawer)', ''));
   };
+  
+  const handleChatPress = () => {
+    if (chatExpanded) {
+      setChatExpanded(false);
+    } else {
+      setChatExpanded(true);
+      fetchConversations();
+    }
+  };
+  
+  const handleNewChat = () => {
+    selectConversation(null);
+    router.push('/(drawer)/chat');
+    props.navigation.closeDrawer();
+  };
+  
+  const handleConversationPress = (conversationId: string) => {
+    selectConversation(conversationId);
+    router.push(`/(drawer)/chat/${conversationId}`);
+    props.navigation.closeDrawer();
+  };
+  
+  // Max 8 conversations visible, then scrollable
+  const visibleConversations = conversations.slice(0, 8);
+  const hasMoreConversations = conversations.length > 8;
   
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -71,8 +159,81 @@ export function DrawerContent(props: DrawerContentComponentProps) {
         <Text style={styles.tagline}>Your thinking partner</Text>
       </View>
       
-      {/* Navigation items */}
-      <ScrollView style={styles.navList} showsVerticalScrollIndicator={false}>
+      {/* Chat Section - Expandable */}
+      <View style={styles.chatSection}>
+        <TouchableOpacity
+          style={[styles.drawerItem, isChatScreen && styles.drawerItemActive]}
+          onPress={handleChatPress}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.drawerIcon}>💬</Text>
+          <Text style={[styles.drawerLabel, isChatScreen && styles.drawerLabelActive]}>
+            Chat
+          </Text>
+          <Text style={styles.expandIcon}>
+            {chatExpanded ? '▼' : '▶'}
+          </Text>
+          {isChatScreen && <View style={styles.activeIndicator} />}
+        </TouchableOpacity>
+        
+        {/* Expanded Conversation List */}
+        {chatExpanded && (
+          <View style={styles.conversationsDropdown}>
+            {/* New Chat Button - Distinct styling */}
+            <TouchableOpacity
+              style={styles.newConversationButton}
+              onPress={handleNewChat}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.newConversationIcon}>➕</Text>
+              <Text style={styles.newConversationLabel}>New conversation</Text>
+            </TouchableOpacity>
+            
+            {/* Separator */}
+            <View style={styles.separator} />
+            
+            {/* Conversation List - Scrollable, max 8 visible */}
+            <ScrollView 
+              style={styles.conversationsList}
+              showsVerticalScrollIndicator={true}
+              nestedScrollEnabled={true}
+            >
+              {isLoading ? (
+                <View style={styles.loadingContainer}>
+                  <Text style={styles.loadingText}>Loading...</Text>
+                </View>
+              ) : visibleConversations.length > 0 ? (
+                <>
+                  {visibleConversations.map((conv) => (
+                    <ConversationItem
+                      key={conv.id}
+                      conversation={conv}
+                      isActive={currentConversationId === conv.id}
+                      onPress={() => handleConversationPress(conv.id)}
+                    />
+                  ))}
+                  {hasMoreConversations && (
+                    <Text style={styles.moreConversationsText}>
+                      +{conversations.length - 8} more conversations
+                    </Text>
+                  )}
+                </>
+              ) : (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>No conversations yet</Text>
+                </View>
+              )}
+            </ScrollView>
+          </View>
+        )}
+      </View>
+      
+      {/* Other Navigation Items */}
+      <ScrollView 
+        style={styles.navList} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.navListContent}
+      >
         {DRAWER_ITEMS.map((item) => (
           <DrawerItem
             key={item.route}
@@ -148,8 +309,15 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginLeft: 48,
   },
+  chatSection: {
+    borderBottomWidth: 1,
+    borderBottomColor: OraaColors.stroke,
+    paddingBottom: 8,
+  },
   navList: {
     flex: 1,
+  },
+  navListContent: {
     paddingTop: 12,
   },
   drawerItem: {
@@ -172,6 +340,7 @@ const styles = StyleSheet.create({
     marginRight: 14,
   },
   drawerLabel: {
+    flex: 1,
     fontSize: 16,
     fontWeight: '500',
     color: OraaColors.textSub,
@@ -180,6 +349,11 @@ const styles = StyleSheet.create({
     color: OraaColors.text,
     fontWeight: '600',
   },
+  expandIcon: {
+    fontSize: 10,
+    color: OraaColors.textMuted,
+    marginLeft: 8,
+  },
   activeIndicator: {
     position: 'absolute',
     right: 16,
@@ -187,6 +361,107 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 3,
     backgroundColor: OraaColors.blue,
+  },
+  conversationsDropdown: {
+    marginLeft: 20,
+    marginRight: 12,
+    marginTop: 4,
+    marginBottom: 8,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    borderRadius: Radii.lg,
+    borderWidth: 1,
+    borderColor: OraaColors.stroke,
+    overflow: 'hidden',
+  },
+  newConversationButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: OraaColors.stroke,
+    borderStyle: 'dashed',
+  },
+  newConversationIcon: {
+    fontSize: 18,
+    marginRight: 12,
+  },
+  newConversationLabel: {
+    fontSize: 15,
+    color: OraaColors.blue,
+    fontWeight: '600',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: OraaColors.stroke,
+    marginVertical: 4,
+  },
+  conversationsList: {
+    maxHeight: 400, // Max height for ~8 conversations
+  },
+  conversationItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginVertical: 2,
+  },
+  conversationItemActive: {
+    backgroundColor: 'rgba(77,163,255,0.15)',
+  },
+  conversationIcon: {
+    fontSize: 16,
+    marginRight: 12,
+  },
+  conversationContent: {
+    flex: 1,
+  },
+  conversationPreview: {
+    fontSize: 14,
+    color: OraaColors.textSub,
+    marginBottom: 2,
+  },
+  conversationPreviewActive: {
+    color: OraaColors.text,
+    fontWeight: '500',
+  },
+  conversationMeta: {
+    fontSize: 11,
+    color: OraaColors.textMuted,
+  },
+  conversationActiveIndicator: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: OraaColors.blue,
+    marginLeft: 8,
+  },
+  loadingContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 13,
+    color: OraaColors.textMuted,
+  },
+  emptyContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 13,
+    color: OraaColors.textMuted,
+    fontStyle: 'italic',
+  },
+  moreConversationsText: {
+    fontSize: 12,
+    color: OraaColors.textMuted,
+    textAlign: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    fontStyle: 'italic',
   },
   footer: {
     paddingHorizontal: 20,
@@ -217,4 +492,3 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.3)',
   },
 });
-

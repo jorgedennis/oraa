@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { OraaColors, Radii, Shadows } from '@/constants/theme';
+import { useAuthStore } from '@/store';
 
 interface SettingsItemProps {
   icon: string;
@@ -71,9 +73,34 @@ function SettingsSection({ title, children }: { title: string; children: React.R
 export function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const router = useRouter();
+  const { isAnonymous, email, usageStatus, logout } = useAuthStore();
   
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer());
+  };
+  
+  const handleCreateAccount = () => {
+    router.push('/modal');
+  };
+  
+  const handleLogin = () => {
+    router.push('/modal');
+  };
+  
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout? You will lose access to your data.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Logout', 
+          style: 'destructive',
+          onPress: () => logout() 
+        }
+      ]
+    );
   };
   
   return (
@@ -106,19 +133,52 @@ export function SettingsScreen() {
           <SettingsItem
             icon="👤"
             label="Profile"
-            value="Anonymous"
+            value={isAnonymous ? 'Anonymous' : (email || 'User')}
             onPress={() => console.log('Profile')}
           />
+          {isAnonymous ? (
+            <>
+              <SettingsItem
+                icon="🔐"
+                label="Create account"
+                onPress={handleCreateAccount}
+              />
+              <SettingsItem
+                icon="🔑"
+                label="Login"
+                onPress={handleLogin}
+              />
+            </>
+          ) : (
+            <>
+              <SettingsItem
+                icon="✉️"
+                label="Email"
+                value={email || 'Not set'}
+                onPress={() => console.log('Email')}
+              />
+              <SettingsItem
+                icon="🚪"
+                label="Logout"
+                destructive
+                onPress={handleLogout}
+              />
+            </>
+          )}
+        </SettingsSection>
+        
+        <SettingsSection title="Usage">
           <SettingsItem
-            icon="✉️"
-            label="Email"
-            value="Not set"
-            onPress={() => console.log('Email')}
+            icon="💬"
+            label="Messages used"
+            value={`${usageStatus?.messages_used || 0} / ${usageStatus?.messages_limit || 10}`}
+            showChevron={false}
           />
           <SettingsItem
-            icon="🔐"
-            label="Create account"
-            onPress={() => console.log('Create account')}
+            icon="📊"
+            label="Account type"
+            value={isAnonymous ? 'Anonymous' : 'Registered'}
+            showChevron={false}
           />
         </SettingsSection>
         
@@ -154,12 +214,6 @@ export function SettingsScreen() {
             label="Theme"
             value="Ocean"
             onPress={() => console.log('Theme')}
-          />
-          <SettingsItem
-            icon="💬"
-            label="Message limit"
-            value="40 per conversation"
-            onPress={() => console.log('Message limit')}
           />
         </SettingsSection>
         

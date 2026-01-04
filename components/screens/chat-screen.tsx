@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { ChatHeader } from '@/components/chat/chat-header';
 import { ChatBubble, TypingIndicator } from '@/components/chat/chat-bubble';
 import { ChatInput } from '@/components/chat/chat-input';
 import { ThreadIndicator } from '@/components/chat/thread-indicator';
 import { OraaColors } from '@/constants/theme';
+import { useChatStore, useAuthStore } from '@/store';
 
 interface Message {
   id: string;
@@ -66,29 +67,54 @@ export function ChatScreen({
   onMenuPress,
   onThreadPress,
   messageLimit = 40,
-  initialMessages = DEMO_MESSAGES,
-  activeThread = DEMO_THREAD,
+  initialMessages = [],
+  activeThread = null,
 }: ChatScreenProps) {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [isTyping, setIsTyping] = useState(true);
   const flatListRef = useRef<FlatList>(null);
   
-  const handleSend = (text: string) => {
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      text,
-      isUser: true,
-    };
-    
-    setMessages((prev) => [...prev, newMessage]);
-    
-    // Scroll to bottom
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-    
-    // Simulate AI typing
-    setIsTyping(true);
+  // Get chat and auth state
+  const { 
+    messages: storeMessages, 
+    isSending, 
+    error: chatError,
+    sendMessage, 
+    clearConversation,
+    setError 
+  } = useChatStore();
+  
+  const { usageStatus } = useAuthStore();
+  
+  // Convert store messages to component format
+  const messages: Message[] = storeMessages.map(msg => ({
+    id: msg.id,
+    text: msg.content,
+    isUser: msg.is_user
+  }));
+  
+  // Show error if any
+  useEffect(() => {
+    if (chatError) {
+      Alert.alert('Error', chatError, [
+        { text: 'OK', onPress: () => setError(null) }
+      ]);
+    }
+  }, [chatError]);
+  
+  // Auto-scroll when new messages arrive
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [messages.length]);
+  
+  const handleSend = async (text: string) => {
+    try {
+      await sendMessage(text);
+    } catch (error) {
+      console.error('Send failed:', error);
+    }
   };
   
   const handleThreadPress = () => {
@@ -112,6 +138,9 @@ export function ChatScreen({
     );
   };
   
+  const currentMessageCount = usageStatus?.messages_used || messages.filter(m => m.isUser).length;
+  const maxMessages = usageStatus?.messages_limit || messageLimit;
+  
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -121,8 +150,8 @@ export function ChatScreen({
       <ChatHeader
         title="Oraa"
         subtitle="Here with you"
-        messageCount={messages.length}
-        maxMessages={messageLimit}
+        messageCount={currentMessageCount}
+        maxMessages={maxMessages}
         onSave={onSave}
         onMenuPress={onMenuPress}
       />
@@ -144,7 +173,7 @@ export function ChatScreen({
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         ListFooterComponent={
-          isTyping ? (
+          isSending ? (
             <View style={styles.messageItem}>
               <TypingIndicator />
             </View>
@@ -157,6 +186,7 @@ export function ChatScreen({
         placeholder="What's on your mind?"
         helperLeft="Tap Save to keep this thread."
         helperRight="Ocean theme"
+        disabled={isSending}
       />
     </KeyboardAvoidingView>
   );
