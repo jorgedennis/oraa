@@ -1,0 +1,259 @@
+look at the most up to date schema sql files and see the changes. now tell me what should be our first 5 n8n flows
+
+Perfect! I can see the key changes in your updated schema:
+Key Updates I Found:
+Message Allowance System - Anonymous users get 10 lifetime messages, registered users get 40/day
+Rate Limiting Functions - use_anonymous_message(), use_daily_message(), get_usage_status()
+User Daily Usage Tracking - New table to track registered user limits
+Anonymous Sessions - Still supported with message caps to encourage signup
+First 5 n8n Workflows (Based on Updated Schema):
+1. User Authentication & Session Management (FIRST)
+Purpose: Handle user signup/login and session creation
+Trigger: Webhook /auth
+Flow:
+Receive: { action: 'signup' | 'login' | 'get_session', email?, password?, device_id? }
+If signup: Call Supabase Auth signup → auto-triggers handle_new_user() function
+If login: Call Supabase Auth login → return JWT
+If get_session: Call get_or_create_session(device_id) → return session_id
+Return: { user_id?, session_id?, jwt?, usage_status }
+Why first? You need auth working before users can chat.
+2. Chat Message with Rate Limiting (SECOND - CORE FEATURE)
+Purpose: Handle messages with usage limits
+Trigger: Webhook /chat/message
+Flow:
+Check Rate Limit:
+If session_id: Call use_anonymous_message(session_id)
+If user_id: Call use_daily_message()
+If limit exceeded: Return error with signup prompt
+Start/Get Conversation:
+Call start_conversation(session_id, thread_id?) if new
+Store User Message:
+Call add_message(conversation_id, content, is_user=true)
+Generate AI Response:
+Fetch conversation history
+Send to OpenAI/Claude
+Store AI Response:
+Call add_message(conversation_id, ai_response, is_user=false)
+Return: AI response + usage status
+Why second? This IS your app. Must work ASAP.
+3. Real-time Insight & Thread Detection (THIRD)
+Purpose: Analyze conversations and generate insights/thread suggestions
+Trigger: Webhook /analyze/conversation (called after conversation ends)
+Flow:
+Fetch conversation messages
+Send to AI with prompts:
+"Extract psychological insights"
+"Identify recurring patterns/threads"
+"Classify into domains"
+Insert Results:
+Create insights (status=pending)
+Create thread_suggestions (status=pending)
+Update thread_entries if matches existing thread
+Optionally notify user
+Why third? Core value prop. Should run right after conversations.
+4. Daily Journal Generation (FOURTH)
+Purpose: Generate end-of-day summaries
+Trigger: Schedule (daily at midnight UTC)
+Flow:
+Get all users with conversations from yesterday
+For each user:
+Fetch all yesterday's conversations & messages
+Send to AI: "Create compassionate daily journal entry"
+Call upsert_journal_entry(user_id, date, summary)
+Optional: Send push notification "Your daily reflection is ready"
+Why fourth? Adds long-term value but not time-critical.
+5. Usage Status Endpoint (FIFTH)
+Purpose: Let app check message limits before sending
+Trigger: Webhook /usage/status
+Flow:
+Receive: { user_id?, session_id? }
+Call get_usage_status(session_id)
+Return:
+  {    "type": "anonymous" | "registered",    "messages_used": 7,    "messages_remaining": 3,    "message_limit": 10,    "resets_at": "2026-01-05T00:00:00Z"  }
+Why fifth? UX enhancement - show users their limits proactively.
+Bonus Workflows (Build After Core 5):
+Account Upgrade (Anonymous → Registered) - Call claim_session() when user signs up
+Weekly Map Update - Batch update user_domains analysis
+Insight Acknowledgement - Handle user responses to insights
+Thread Management - Create/update/resolve threads
+Data Export - GDPR compliance via export_user_data()
+n8n Sub-Workflow: Authentication Validator
+Create a reusable sub-workflow that other workflows can call:
+Name: validate-request
+Input: { user_id?, session_id?, device_id? }
+Logic:
+If user_id: Verify JWT token validity
+If session_id + device_id: Verify session exists and matches device
+Check RLS policies would pass
+Return: { valid: boolean, user_id?, error? }
+Use in all workflows by calling this sub-workflow first before processing requests.
+Would you like me to provide detailed n8n workflow JSON for any of these?
+ok give me very clear instructions on how to set up auth. what services and what to do in n8n for: 
+
+
+
+1. User Authentication & Session Management (FIRST)
+
+
+
+be very clear and descriptive of where to go for what. (i am novice at this) 
+
+Complete Setup Guide: User Authentication & Session Management
+I'll walk you through every step. Let's set this up together.
+Part 1: Supabase Setup (Get Your API Keys)
+Step 1.1: Get Your Supabase Credentials
+Go to your Supabase Dashboard: https://supabase.com/dashboard
+Select your project (the one you created for Oraa)
+In the left sidebar, click on the ⚙️ Settings (gear icon at bottom)
+Click on API in the submenu
+Copy and save these values (you'll need them in n8n):
+Project URL (looks like: https://xxxxx.supabase.co)
+anon public key (under "Project API keys" - long string starting with eyJ...)
+service_role key (click "Reveal" button - keep this secret!)
+Step 1.2: Enable Email Auth in Supabase
+Still in Supabase Dashboard, click 🔐 Authentication in the left sidebar
+Click Providers in the submenu
+Find Email provider
+Make sure it's enabled (toggle should be green/on)
+Scroll down and configure:
+✅ Enable email confirmations: OFF (for testing - turn on later)
+✅ Enable email signups: ON
+Click Save
+Part 2: n8n Setup (Create the Workflow)
+Step 2.1: Create New Workflow
+Open your n8n: https://n8n.srv1244885.hstgr.cloud
+Click "+ New workflow" (top right corner)
+Name it: "Auth - User Session Management" (click the workflow name at top to rename)
+Step 2.2: Add Webhook Trigger
+Click the "+" button on the canvas
+In the search box, type "Webhook"
+Click "Webhook" (under "Trigger" section)
+Configure the Webhook node:
+HTTP Method: POST
+Path: auth
+Authentication: None (we'll handle it ourselves)
+Respond: Immediately
+Response Code: 200
+Click "Execute Node" to test
+Copy the Production URL - it will look like: https://n8n.srv1244885.hstgr.cloud/webhook/auth
+Keep this URL - your app will call it!
+Step 2.3: Add Switch Node (Route Different Auth Actions)
+Click the "+" on the line coming out of Webhook
+Search for "Switch"
+Click "Switch" (under "Flow" section)
+Configure the Switch node:
+Mode: Rules
+Click "Add Routing Rule" 3 times (you'll have 4 total rules)
+Rule 0 (Signup):
+Output: 0
+Click "Add Condition"
+Type: String
+Value 1: ={{ $json.body.action }}
+Operation: equals
+Value 2: signup
+Rule 1 (Login):
+Output: 1
+Click "Add Condition"
+Type: String
+Value 1: ={{ $json.body.action }}
+Operation: equals
+Value 2: login
+Rule 2 (Get Session - Anonymous):
+Output: 2
+Click "Add Condition"
+Type: String
+Value 1: ={{ $json.body.action }}
+Operation: equals
+Value 2: get_session
+Rule 3 (Fallback):
+Output: 3
+Leave as "Otherwise"
+Click "Execute Node"
+Step 2.4: Add Supabase Credentials to n8n
+Before creating the next nodes, let's store your Supabase credentials securely:
+Click your profile icon (top right)
+Click "Credentials"
+Click "+ New Credential"
+Search for "Supabase API"
+Configure:
+Credential Name: "Oraa Supabase"
+Host: Your Project URL (e.g., https://xxxxx.supabase.co)
+Service Role Secret: Paste your service_role key
+Click "Save"
+Step 2.5: Build the SIGNUP Path (Output 0)
+Click on the "0" output from the Switch node
+Click the "+" button
+Search for "HTTP Request"
+Click "HTTP Request"
+Configure:
+Method: POST
+URL: ={{ $('Webhook').first().json.supabase_url }}/auth/v1/signup
+Wait, let me give you a better approach...
+Actually, let me give you the easier approach using Code node to handle Supabase:
+Better Approach - Use Code Node for Supabase Auth:
+Click on the "0" output from Switch
+Add "Code" node
+Name it: "Signup User"
+In the code editor, paste this:
+// Get the request dataconst email = $input.first().json.body.email;const password = $input.first().json.body.password;// Your Supabase credentialsconst supabaseUrl = 'YOUR_SUPABASE_URL'; // Replace with your URLconst supabaseKey = 'YOUR_SERVICE_ROLE_KEY'; // Replace with your service role key// Call Supabase Auth APIconst response = await fetch(`${supabaseUrl}/auth/v1/signup`, {  method: 'POST',  headers: {    'Content-Type': 'application/json',    'apikey': supabaseKey,    'Authorization': `Bearer ${supabaseKey}`  },  body: JSON.stringify({    email: email,    password: password,    email_confirm: false // Skip email confirmation for now  })});const data = await response.json();if (response.ok) {  return {    json: {      success: true,      user_id: data.user.id,      email: data.user.email,      jwt: data.access_token,      message: 'Account created successfully'    }  };} else {  return {    json: {      success: false,      error: data.message || 'Signup failed',      details: data    }  };}
+Replace YOUR_SUPABASE_URL and YOUR_SERVICE_ROLE_KEY with your actual values
+Click "Test step"
+Step 2.6: Build the LOGIN Path (Output 1)
+Click on the "1" output from Switch
+Add "Code" node
+Name it: "Login User"
+Paste this code:
+// Get the request dataconst email = $input.first().json.body.email;const password = $input.first().json.body.password;// Your Supabase credentialsconst supabaseUrl = 'YOUR_SUPABASE_URL'; // Replaceconst supabaseKey = 'YOUR_SERVICE_ROLE_KEY'; // Replace// Call Supabase Auth APIconst response = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=password`, {  method: 'POST',  headers: {    'Content-Type': 'application/json',    'apikey': supabaseKey  },  body: JSON.stringify({    email: email,    password: password  })});const data = await response.json();if (response.ok) {  return {    json: {      success: true,      user_id: data.user.id,      email: data.user.email,      jwt: data.access_token,      refresh_token: data.refresh_token,      message: 'Login successful'    }  };} else {  return {    json: {      success: false,      error: data.error_description || 'Login failed',      details: data    }  };}
+Replace your credentials again
+Step 2.7: Build the GET SESSION Path (Output 2 - Anonymous)
+Click on the "2" output from Switch
+Add "Code" node
+Name it: "Get or Create Session"
+Paste this code:
+// Get device ID from requestconst deviceId = $input.first().json.body.device_id;if (!deviceId) {  return {    json: {      success: false,      error: 'device_id is required'    }  };}// Your Supabase credentialsconst supabaseUrl = 'YOUR_SUPABASE_URL'; // Replaceconst supabaseKey = 'YOUR_SERVICE_ROLE_KEY'; // Replace// Call the Supabase function to get or create sessionconst response = await fetch(`${supabaseUrl}/rest/v1/rpc/get_or_create_session`, {  method: 'POST',  headers: {    'Content-Type': 'application/json',    'apikey': supabaseKey,    'Authorization': `Bearer ${supabaseKey}`  },  body: JSON.stringify({    p_device_id: deviceId  })});const sessionId = await response.json();if (response.ok) {  // Get usage status for this session  const usageResponse = await fetch(`${supabaseUrl}/rest/v1/rpc/get_usage_status`, {    method: 'POST',    headers: {      'Content-Type': 'application/json',      'apikey': supabaseKey,      'Authorization': `Bearer ${supabaseKey}`    },    body: JSON.stringify({      p_session_id: sessionId    })  });    const usage = await usageResponse.json();    return {    json: {      success: true,      session_id: sessionId,      usage_status: usage,      message: 'Session ready'    }  };} else {  return {    json: {      success: false,      error: 'Failed to create session'    }  };}
+Replace credentials
+Step 2.8: Handle Errors (Output 3 - Fallback)
+Click on the "3" output from Switch
+Add "Respond to Webhook" node
+Configure:
+Response Body:
+   {     "success": false,     "error": "Invalid action. Use: signup, login, or get_session"   }
+Status Code: 400
+Step 2.9: Merge All Responses
+Click the "+" at the end of your canvas
+Add "Merge" node (search for it)
+Connect ALL code nodes (Signup, Login, Get Session) to the Merge node
+Configure Merge:
+Mode: Append
+Output Data: Input 1 + Input 2 + Input 3
+Step 2.10: Final Response
+After the Merge node, add "Respond to Webhook" node
+Configure:
+Response Body: ={{ $json }}
+This will return whatever comes from the previous nodes
+Step 2.11: Save and Activate
+Click "Save" (top right)
+Toggle the switch to "Active" (top right - it should turn green)
+Your webhook is now live!
+Part 3: Testing Your Workflow
+Test with Postman or curl:
+Test 1: Create Anonymous Session
+curl -X POST https://n8n.srv1244885.hstgr.cloud/webhook/auth \  -H "Content-Type: application/json" \  -d '{    "action": "get_session",    "device_id": "test-device-123"  }'
+Expected Response:
+{  "success": true,  "session_id": "uuid-here",  "usage_status": {    "type": "anonymous",    "messages_used": 0,    "messages_remaining": 10  }}
+Test 2: Sign Up
+curl -X POST https://n8n.srv1244885.hstgr.cloud/webhook/auth \  -H "Content-Type: application/json" \  -d '{    "action": "signup",    "email": "test@example.com",    "password": "password123"  }'
+Test 3: Login
+curl -X POST https://n8n.srv1244885.hstgr.cloud/webhook/auth \  -H "Content-Type: application/json" \  -d '{    "action": "login",    "email": "test@example.com",    "password": "password123"  }'
+Part 4: Update Your React Native App
+In your /Users/jvrgasi/Desktop/oraa/api/index.ts, update to:
+const API_URL = 'https://n8n.srv1244885.hstgr.cloud/webhook';export const authAPI = {  async getSession(deviceId: string) {    const response = await fetch(`${API_URL}/auth`, {      method: 'POST',      headers: { 'Content-Type': 'application/json' },      body: JSON.stringify({ action: 'get_session', device_id: deviceId })    });    return response.json();  },    async signup(email: string, password: string) {    const response = await fetch(`${API_URL}/auth`, {      method: 'POST',      headers: { 'Content-Type': 'application/json' },      body: JSON.stringify({ action: 'signup', email, password })    });    return response.json();  },    async login(email: string, password: string) {    const response = await fetch(`${API_URL}/auth`, {      method: 'POST',      headers: { 'Content-Type': 'application/json' },      body: JSON.stringify({ action: 'login', email, password })    });    return response.json();  }};
+Troubleshooting
+If you get errors:
+"Function not found": Make sure you ran the migrations in Supabase (supabase db push)
+"Unauthorized": Check your service_role key is correct
+"Invalid URL": Ensure your Supabase URL doesn't have trailing slash
+Check your workflow execution:
+In n8n, click "Executions" (left sidebar)
+Click on any failed execution to see the error details
+Need help with any step? Let me know where you got stuck!
