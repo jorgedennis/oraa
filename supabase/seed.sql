@@ -2,17 +2,16 @@
 -- Run this after migrations to populate reference data
 
 -- ============================================================================
--- DOMAINS (The 7 psychological domains for the user's "Map")
+-- DOMAINS (The 5 psychological domains for the user's "Map")
+-- Per product spec: Relational, Emotional, Cognitive, Somatic, Behavioral
 -- ============================================================================
 
 insert into public.domains (id, name, icon, display_order) values
-  ('inner', 'Inner', '🌀', 1),
+  ('relational', 'Relational', '🤝', 1),
   ('emotional', 'Emotional', '💙', 2),
-  ('relational', 'Relational', '🤝', 3),
-  ('performing', 'Performing', '🎯', 4),
-  ('embodied', 'Embodied', '🧘', 5),
-  ('temporal', 'Temporal', '⏳', 6),
-  ('meaning', 'Meaning', '✨', 7)
+  ('cognitive', 'Cognitive', '🧠', 3),
+  ('somatic', 'Somatic', '🫀', 4),
+  ('behavioral', 'Behavioral', '⚡', 5)
 on conflict (id) do update
 set name = excluded.name,
     icon = excluded.icon,
@@ -22,11 +21,28 @@ set name = excluded.name,
 -- DOMAIN DESCRIPTIONS (for reference, stored in app constants)
 -- ============================================================================
 
--- Inner: Self-reflection, inner world, internal processing
--- Emotional: Feelings, emotional patterns, emotional regulation  
--- Relational: Relationships, boundaries, connection with others
--- Performing: Work, achievement, competence, imposter syndrome
--- Embodied: Physical sensations, body awareness, somatic experience
--- Temporal: Past/present/future, memories, life timeline
--- Meaning: Purpose, values, existential questions
+-- Relational: Patterns in how you connect with others
+--   - How you relate to people
+--   - Boundaries, attachment styles
+--   - Communication patterns in relationships
+--
+-- Emotional: Patterns in how you experience and process feelings
+--   - Emotional triggers and responses
+--   - How you handle difficult emotions
+--   - Emotional regulation patterns
+--
+-- Cognitive: Patterns in how you think and make decisions
+--   - Thought patterns and loops
+--   - Decision-making tendencies
+--   - Beliefs and assumptions
+--
+-- Somatic: Patterns in how emotions manifest physically
+--   - Body sensations and emotions
+--   - Physical stress responses
+--   - Mind-body connection
+--
+-- Behavioral: Patterns in what you do under certain conditions
+--   - Habitual responses
+--   - Coping mechanisms
+--   - Action tendencies
 

@@ -1,91 +1,120 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
-import { DomainCard, Domain } from '@/components/map/domain-card';
-import { OraaColors } from '@/constants/theme';
+import { useRouter } from 'expo-router';
+import { useInsightsStore, DomainWithInsights, SelfInsight } from '@/store';
+import { OraaColors, Radii, Shadows } from '@/constants/theme';
 
-// Mock data for the 7 domains
-const DOMAINS: Domain[] = [
-  {
-    id: 'inner',
-    name: 'Inner',
-    icon: '🌀',
-    analysis: 'You tend to process experiences internally before sharing them. There\'s a rich inner world here, sometimes at odds with what you show externally. Self-reflection is a strength, though it can tip into rumination.',
-    insights: [
-      { id: '1', text: 'You mentioned feeling like you\'re "performing" a version of yourself at work', status: 'agreed', date: 'Dec 28' },
-      { id: '2', text: 'There\'s a pattern of overthinking decisions until the window closes', status: 'maybe', date: 'Dec 22' },
-    ],
-  },
-  {
-    id: 'emotional',
-    name: 'Emotional',
-    icon: '💙',
-    analysis: 'Anxiety shows up most often as a physical sensation first—tight chest, racing thoughts. You\'re learning to notice the early signs. Guilt is a recurring theme, especially around setting boundaries.',
-    insights: [
-      { id: '3', text: 'Stress manifests physically before you consciously recognize it', status: 'agreed', date: 'Dec 27' },
-      { id: '4', text: 'You feel responsible for other people\'s emotional states', status: 'agreed', date: 'Dec 20' },
-      { id: '5', text: 'Anger is the hardest emotion for you to express directly', status: 'disagreed', date: 'Dec 18' },
-    ],
-  },
-  {
-    id: 'relational',
-    name: 'Relational',
-    icon: '🤝',
-    analysis: 'Close relationships are deeply important to you, but there\'s a pattern of giving more than you receive. Boundary-setting feels risky—like it might cost you the connection. You\'re working on believing relationships can survive honest needs.',
-    insights: [
-      { id: '6', text: 'You tend to anticipate others\' needs before they ask', status: 'agreed', date: 'Dec 26' },
-      { id: '7', text: 'Conflict avoidance has sometimes led to resentment building up', status: 'maybe', date: 'Dec 21' },
-    ],
-  },
-  {
-    id: 'performing',
-    name: 'Performing',
-    icon: '🎯',
-    analysis: 'High standards drive you, but they\'re often set by an internalized voice that\'s harsher than any external critic. You\'re capable and competent, yet imposter syndrome makes it hard to own your accomplishments.',
-    insights: [
-      { id: '8', text: 'Success often feels like "getting away with something"', status: 'agreed', date: 'Dec 25' },
-      { id: '9', text: 'You compare your behind-the-scenes to others\' highlight reels', status: 'agreed', date: 'Dec 19' },
-    ],
-  },
-  {
-    id: 'embodied',
-    name: 'Embodied',
-    icon: '🧘',
-    analysis: 'Your body often knows things before your mind catches up. Sleep and exercise directly impact your emotional regulation, but they\'re often the first things to slip when stressed.',
-    insights: [
-      { id: '10', text: 'Physical tension in your shoulders correlates with work stress', status: 'agreed', date: 'Dec 24' },
-    ],
-  },
-  {
-    id: 'temporal',
-    name: 'Temporal',
-    icon: '⏳',
-    analysis: 'There\'s tension between who you are now and who you thought you\'d be by this point. The past sometimes feels more vivid than the present. You\'re learning to hold multiple timelines—where you\'ve been, where you are, where you\'re going.',
-    insights: [
-      { id: '11', text: 'Certain memories from childhood still feel emotionally charged', status: 'agreed', date: 'Dec 23' },
-      { id: '12', text: 'Future-planning sometimes becomes a way to avoid present discomfort', status: 'maybe', date: 'Dec 17' },
-    ],
-  },
-  {
-    id: 'meaning',
-    name: 'Meaning',
-    icon: '✨',
-    analysis: 'You\'re searching for work that matters, not just work that pays. There\'s a desire to contribute something lasting. The question "is this it?" surfaces more often than you\'d like.',
-    insights: [
-      { id: '13', text: 'Purpose feels tied to impact on others', status: 'agreed', date: 'Dec 22' },
-      { id: '14', text: 'You question whether your current path aligns with your values', status: 'agreed', date: 'Dec 16' },
-    ],
-  },
-];
+// Domain Card Component
+interface DomainCardProps {
+  domain: DomainWithInsights;
+  onInsightPress: (insight: SelfInsight) => void;
+  onDeleteInsight: (insightId: string) => void;
+}
+
+function DomainCard({ domain, onInsightPress, onDeleteInsight }: DomainCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const insightCount = domain.insights.length;
+  
+  return (
+    <View style={styles.domainCard}>
+      <TouchableOpacity 
+        style={styles.domainHeader} 
+        onPress={() => setIsExpanded(!isExpanded)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.domainHeaderLeft}>
+          <Text style={styles.domainIcon}>{domain.domain_icon}</Text>
+          <View>
+            <Text style={styles.domainName}>{domain.domain_name}</Text>
+            <Text style={styles.insightCount}>
+              {insightCount} {insightCount === 1 ? 'insight' : 'insights'}
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.expandIcon}>{isExpanded ? '−' : '+'}</Text>
+      </TouchableOpacity>
+      
+      {isExpanded && (
+        <View style={styles.insightsList}>
+          {insightCount === 0 ? (
+            <Text style={styles.emptyDomain}>No insights in this domain yet.</Text>
+          ) : (
+            domain.insights.map((insight) => (
+              <TouchableOpacity
+                key={insight.id}
+                style={styles.insightItem}
+                onPress={() => onInsightPress(insight)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.insightContent}>
+                  <Text style={styles.insightText}>{insight.observation}</Text>
+                  <View style={styles.insightMeta}>
+                    {insight.user_response && (
+                      <View style={[
+                        styles.responseBadge,
+                        insight.user_response === 'yes' && styles.responseBadgeYes,
+                        insight.user_response === 'maybe' && styles.responseBadgeMaybe,
+                        insight.user_response === 'no' && styles.responseBadgeNo,
+                      ]}>
+                        <Text style={[
+                          styles.responseBadgeText,
+                          insight.user_response === 'yes' && styles.responseBadgeTextYes,
+                          insight.user_response === 'maybe' && styles.responseBadgeTextMaybe,
+                          insight.user_response === 'no' && styles.responseBadgeTextNo,
+                        ]}>
+                          {insight.user_response === 'yes' ? 'Agreed' : 
+                           insight.user_response === 'maybe' ? 'Maybe' : 'Disagreed'}
+                        </Text>
+                      </View>
+                    )}
+                    {insight.thread_associations.length > 0 && (
+                      <Text style={styles.threadCount}>
+                        {insight.thread_associations.length} {insight.thread_associations.length === 1 ? 'thread' : 'threads'}
+                      </Text>
+                    )}
+                  </View>
+                </View>
+                <Text style={styles.chevron}>›</Text>
+              </TouchableOpacity>
+            ))
+          )}
+        </View>
+      )}
+    </View>
+  );
+}
 
 export function MapScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const router = useRouter();
+  
+  const { mapInsights, isLoadingMap, fetchMapInsights, deleteInsight } = useInsightsStore();
+  
+  useEffect(() => {
+    fetchMapInsights();
+  }, []);
   
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer());
   };
+  
+  const handleInsightPress = (insight: SelfInsight) => {
+    // Navigate to insight detail screen
+    router.push({
+      pathname: '/(drawer)/map',
+      params: { insightId: insight.id }
+    });
+  };
+  
+  const handleDeleteInsight = async (insightId: string) => {
+    await deleteInsight(insightId);
+  };
+  
+  // Calculate total insights
+  const totalInsights = mapInsights.reduce((sum, domain) => sum + domain.insights.length, 0);
   
   return (
     <View style={styles.container}>
@@ -103,30 +132,56 @@ export function MapScreen() {
           </TouchableOpacity>
           <View>
             <Text style={styles.title}>Your Map</Text>
-            <Text style={styles.subtitle}>7 domains • Updated today</Text>
+            <Text style={styles.subtitle}>
+              {mapInsights.length} domains • {totalInsights} insights
+            </Text>
           </View>
         </View>
       </View>
       
       {/* Domain cards */}
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + 20 },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.intro}>
-          Your map is Oraa's understanding of you across seven domains. It evolves as we talk.
-        </Text>
-        
-        <View style={styles.domainList}>
-          {DOMAINS.map((domain) => (
-            <DomainCard key={domain.id} domain={domain} />
-          ))}
+      {isLoadingMap ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={OraaColors.blue} />
+          <Text style={styles.loadingText}>Loading your Map...</Text>
         </View>
-      </ScrollView>
+      ) : (
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: insets.bottom + 20 },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={styles.intro}>
+            Your Map is Oraa's understanding of you across five domains. 
+            Self insights are portable patterns that apply across different areas of your life.
+          </Text>
+          
+          <View style={styles.domainList}>
+            {mapInsights.map((domain) => (
+              <DomainCard 
+                key={domain.domain_id} 
+                domain={domain}
+                onInsightPress={handleInsightPress}
+                onDeleteInsight={handleDeleteInsight}
+              />
+            ))}
+          </View>
+          
+          {totalInsights === 0 && (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyIcon}>🗺️</Text>
+              <Text style={styles.emptyTitle}>Your Map is empty</Text>
+              <Text style={styles.emptyText}>
+                As we talk, Oraa will surface insights about your patterns. 
+                Acknowledge them in the Insights tab to add them here.
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -188,5 +243,145 @@ const styles = StyleSheet.create({
   domainList: {
     gap: 12,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: OraaColors.textMuted,
+  },
+  // Domain Card styles
+  domainCard: {
+    backgroundColor: OraaColors.surface,
+    borderWidth: 1,
+    borderColor: OraaColors.stroke,
+    borderRadius: Radii.xl,
+    overflow: 'hidden',
+    ...Shadows.soft,
+  },
+  domainHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+  },
+  domainHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  domainIcon: {
+    fontSize: 24,
+  },
+  domainName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: OraaColors.text,
+  },
+  insightCount: {
+    fontSize: 13,
+    color: OraaColors.textMuted,
+    marginTop: 2,
+  },
+  expandIcon: {
+    fontSize: 20,
+    color: OraaColors.textMuted,
+    fontWeight: '300',
+  },
+  insightsList: {
+    borderTopWidth: 1,
+    borderTopColor: OraaColors.stroke,
+  },
+  emptyDomain: {
+    padding: 16,
+    fontSize: 14,
+    color: OraaColors.textMuted,
+    fontStyle: 'italic',
+  },
+  insightItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: OraaColors.stroke,
+  },
+  insightContent: {
+    flex: 1,
+    marginRight: 12,
+  },
+  insightText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: OraaColors.textSub,
+    marginBottom: 8,
+  },
+  insightMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  responseBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Radii.sm,
+    borderWidth: 1,
+  },
+  responseBadgeYes: {
+    backgroundColor: 'rgba(74,222,128,0.10)',
+    borderColor: 'rgba(74,222,128,0.25)',
+  },
+  responseBadgeMaybe: {
+    backgroundColor: 'rgba(250,204,21,0.10)',
+    borderColor: 'rgba(250,204,21,0.25)',
+  },
+  responseBadgeNo: {
+    backgroundColor: 'rgba(248,113,113,0.10)',
+    borderColor: 'rgba(248,113,113,0.25)',
+  },
+  responseBadgeText: {
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  responseBadgeTextYes: {
+    color: 'rgba(74,222,128,0.9)',
+  },
+  responseBadgeTextMaybe: {
+    color: 'rgba(250,204,21,0.9)',
+  },
+  responseBadgeTextNo: {
+    color: 'rgba(248,113,113,0.9)',
+  },
+  threadCount: {
+    fontSize: 11,
+    color: OraaColors.textMuted,
+  },
+  chevron: {
+    fontSize: 20,
+    color: OraaColors.textMuted,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  emptyIcon: {
+    fontSize: 40,
+    marginBottom: 16,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: OraaColors.text,
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: OraaColors.textMuted,
+    textAlign: 'center',
+    maxWidth: 280,
+    lineHeight: 20,
+  },
 });
-

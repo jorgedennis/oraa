@@ -1,110 +1,150 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { InsightCard } from '@/components/insights/insight-card';
 import { ThreadSuggestion } from '@/components/insights/thread-suggestion';
 import { AcknowledgedInsight } from '@/components/insights/acknowledged-insight';
+import { useInsightsStore, useThreadsStore, StagedItem, InsightResponse } from '@/store';
 import { OraaColors, Radii } from '@/constants/theme';
 
-// Mock data for pending insights
-const PENDING_INSIGHTS = [
-  {
-    id: '1',
-    observation: 'You tend to take on responsibility for fixing situations even when they\'re not yours to fix. This shows up especially in family dynamics.',
-    domain: 'Relational',
-  },
-  {
-    id: '2',
-    observation: 'When you feel overwhelmed, your first instinct is to isolate rather than reach out. There might be a belief that needing support is a burden.',
-    domain: 'Emotional',
-  },
-  {
-    id: '3',
-    observation: 'Your energy shifts noticeably when discussing creative work vs. administrative tasks. The former lights you up; the latter drains you.',
-    domain: 'Performing',
-  },
-];
+// Thread Insight Card Component (different from self insight card)
+interface ThreadInsightCardProps {
+  id: string;
+  observation: string;
+  threadTitle?: string;
+  onRespond: (id: string, response: 'yes' | 'partially' | 'no', note?: string) => void;
+}
 
-const THREAD_SUGGESTIONS = [
-  {
-    id: 't1',
-    topic: 'Your relationship with your mom',
-    description: 'This has come up in several conversations—boundaries, guilt, feeling responsible for her emotions. Want me to track this over time?',
-    mentionCount: 6,
-  },
-  {
-    id: 't2',
-    topic: 'Career transition anxiety',
-    description: 'You\'ve mentioned feeling stuck and questioning your path multiple times. A thread could help track what\'s shifting.',
-    mentionCount: 4,
-  },
-];
-
-// Mock data for acknowledged insights
-const ACKNOWLEDGED_INSIGHTS = [
-  {
-    id: 'a1',
-    observation: 'You process experiences internally before sharing them. There\'s a rich inner world here, sometimes at odds with what you show externally.',
-    domain: 'Inner',
-    response: 'yes' as const,
-    date: 'Dec 28',
-  },
-  {
-    id: 'a2',
-    observation: 'Stress manifests physically before you consciously recognize it—tight chest, shallow breathing.',
-    domain: 'Embodied',
-    response: 'yes' as const,
-    note: 'Yes, especially in my shoulders. I notice it after the fact usually.',
-    date: 'Dec 27',
-  },
-  {
-    id: 'a3',
-    observation: 'You compare your behind-the-scenes to others\' highlight reels, especially at work.',
-    domain: 'Performing',
-    response: 'maybe' as const,
-    note: 'Sometimes, but I think I\'m getting better at catching myself.',
-    date: 'Dec 25',
-  },
-  {
-    id: 'a4',
-    observation: 'Anger is the hardest emotion for you to express directly.',
-    domain: 'Emotional',
-    response: 'no' as const,
-    note: 'Actually I think it\'s sadness that\'s harder for me.',
-    date: 'Dec 22',
-  },
-  {
-    id: 'a5',
-    observation: 'You feel responsible for other people\'s emotional states, especially family members.',
-    domain: 'Relational',
-    response: 'yes' as const,
-    date: 'Dec 20',
-  },
-];
+function ThreadInsightCard({ id, observation, threadTitle, onRespond }: ThreadInsightCardProps) {
+  const [note, setNote] = useState('');
+  const [responded, setResponded] = useState(false);
+  const [selectedResponse, setSelectedResponse] = useState<'yes' | 'partially' | 'no' | null>(null);
+  
+  const handleResponse = (response: 'yes' | 'partially' | 'no') => {
+    setSelectedResponse(response);
+    setResponded(true);
+    onRespond(id, response, note.trim() || undefined);
+  };
+  
+  if (responded) {
+    return (
+      <View style={[styles.threadInsightCard, styles.cardResponded]}>
+        <View style={styles.respondedContent}>
+          <Text style={styles.checkmark}>✓</Text>
+          <Text style={styles.respondedText}>Noted</Text>
+        </View>
+      </View>
+    );
+  }
+  
+  return (
+    <View style={styles.threadInsightCard}>
+      <View style={styles.threadInsightHeader}>
+        <Text style={styles.threadInsightBadge}>🧵 Thread Insight</Text>
+        {threadTitle && <Text style={styles.threadName}>{threadTitle}</Text>}
+      </View>
+      
+      <Text style={styles.threadInsightObservation}>{observation}</Text>
+      
+      <Text style={styles.threadInsightQuestion}>Does this match your experience?</Text>
+      
+      <View style={styles.buttons}>
+        <TouchableOpacity
+          style={[styles.button, styles.buttonYes]}
+          onPress={() => handleResponse('yes')}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.buttonText, styles.buttonTextYes]}>Yes</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[styles.button, styles.buttonMaybe]}
+          onPress={() => handleResponse('partially')}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.buttonText, styles.buttonTextMaybe]}>Partially</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[styles.button, styles.buttonNo]}
+          onPress={() => handleResponse('no')}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.buttonText, styles.buttonTextNo]}>No</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
 
 export function InsightsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const [showHistory, setShowHistory] = useState(false);
   
+  const { 
+    stagingQueue, 
+    mapInsights, 
+    isLoadingQueue, 
+    fetchStagingQueue, 
+    respondToInsight,
+    fetchMapInsights 
+  } = useInsightsStore();
+  
+  const { createThreadFromSuggestion, dismissSuggestion } = useThreadsStore();
+  
+  useEffect(() => {
+    fetchStagingQueue();
+    fetchMapInsights(); // For showing acknowledged insights
+  }, []);
+  
   const openDrawer = () => {
     navigation.dispatch(DrawerActions.openDrawer());
   };
   
-  const handleInsightRespond = (id: string, response: 'yes' | 'maybe' | 'no', note?: string) => {
-    console.log('Insight response:', { id, response, note });
+  // Separate items by type
+  const selfInsights = stagingQueue.filter(item => item.item_type === 'self_insight');
+  const threadInsights = stagingQueue.filter(item => item.item_type === 'thread_insight');
+  const threadSuggestions = stagingQueue.filter(item => item.item_type === 'thread_suggestion');
+  
+  const handleInsightRespond = async (queueId: string, response: 'yes' | 'maybe' | 'no', note?: string) => {
+    await respondToInsight(queueId, response as InsightResponse, note);
   };
   
-  const handleCreateThread = (id: string) => {
-    console.log('Create thread:', id);
+  const handleThreadInsightRespond = async (queueId: string, response: 'yes' | 'partially' | 'no', note?: string) => {
+    await respondToInsight(queueId, response as InsightResponse, note);
   };
   
-  const handleDismissThread = (id: string) => {
-    console.log('Dismiss thread:', id);
+  const handleCreateThread = async (suggestionQueueId: string) => {
+    const suggestion = stagingQueue.find(s => s.queue_id === suggestionQueueId);
+    if (suggestion && suggestion.item_type === 'thread_suggestion') {
+      await createThreadFromSuggestion(suggestion.item_id);
+      await respondToInsight(suggestionQueueId, 'yes');
+    }
   };
   
-  const totalPending = PENDING_INSIGHTS.length + THREAD_SUGGESTIONS.length;
+  const handleDismissThread = async (suggestionQueueId: string) => {
+    const suggestion = stagingQueue.find(s => s.queue_id === suggestionQueueId);
+    if (suggestion && suggestion.item_type === 'thread_suggestion') {
+      await dismissSuggestion(suggestion.item_id);
+      await respondToInsight(suggestionQueueId, 'no');
+    }
+  };
+  
+  // Get all acknowledged insights for history section
+  const acknowledgedInsights = mapInsights.flatMap(domain => 
+    domain.insights.map(insight => ({
+      ...insight,
+      domain: domain.domain_name
+    }))
+  ).sort((a, b) => {
+    const dateA = a.acknowledged_at ? new Date(a.acknowledged_at).getTime() : 0;
+    const dateB = b.acknowledged_at ? new Date(b.acknowledged_at).getTime() : 0;
+    return dateB - dateA;
+  });
+  
+  const totalPending = stagingQueue.length;
   
   return (
     <View style={styles.container}>
@@ -127,101 +167,132 @@ export function InsightsScreen() {
         </View>
       </View>
       
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + 20 },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.intro}>
-          Oraa surfaces observations from your conversations. Review them before they become part of your Map.
-        </Text>
-        
-        {/* New Insights Section */}
-        {PENDING_INSIGHTS.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>✨ New Insights</Text>
-            <View style={styles.cardList}>
-              {PENDING_INSIGHTS.map((insight) => (
-                <InsightCard
-                  key={insight.id}
-                  id={insight.id}
-                  observation={insight.observation}
-                  domain={insight.domain}
-                  onRespond={handleInsightRespond}
-                />
-              ))}
-            </View>
-          </View>
-        )}
-        
-        {/* Thread Suggestions Section */}
-        {THREAD_SUGGESTIONS.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🧵 Thread Suggestions</Text>
-            <View style={styles.cardList}>
-              {THREAD_SUGGESTIONS.map((suggestion) => (
-                <ThreadSuggestion
-                  key={suggestion.id}
-                  id={suggestion.id}
-                  topic={suggestion.topic}
-                  description={suggestion.description}
-                  mentionCount={suggestion.mentionCount}
-                  onCreateThread={handleCreateThread}
-                  onDismiss={handleDismissThread}
-                />
-              ))}
-            </View>
-          </View>
-        )}
-        
-        {totalPending === 0 && (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>✨</Text>
-            <Text style={styles.emptyTitle}>All caught up</Text>
-            <Text style={styles.emptyText}>
-              New insights will appear here as we talk.
-            </Text>
-          </View>
-        )}
-        
-        {/* Previously Acknowledged Section */}
-        {ACKNOWLEDGED_INSIGHTS.length > 0 && (
-          <View style={styles.section}>
-            <TouchableOpacity 
-              style={styles.sectionHeader}
-              onPress={() => setShowHistory(!showHistory)}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.sectionTitle}>📋 Previously Acknowledged</Text>
-              <Text style={styles.expandIcon}>{showHistory ? '−' : '+'}</Text>
-            </TouchableOpacity>
-            
-            {showHistory && (
-              <View style={styles.historyList}>
-                {ACKNOWLEDGED_INSIGHTS.map((insight) => (
-                  <AcknowledgedInsight
-                    key={insight.id}
-                    observation={insight.observation}
-                    domain={insight.domain}
-                    response={insight.response}
-                    note={insight.note}
-                    date={insight.date}
+      {isLoadingQueue ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={OraaColors.blue} />
+          <Text style={styles.loadingText}>Loading insights...</Text>
+        </View>
+      ) : (
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: insets.bottom + 20 },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={styles.intro}>
+            Oraa surfaces observations from your conversations. Review them before they become part of your Map.
+          </Text>
+          
+          {/* New Self Insights Section */}
+          {selfInsights.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>✨ New Insights</Text>
+              <View style={styles.cardList}>
+                {selfInsights.map((item) => (
+                  <InsightCard
+                    key={item.queue_id}
+                    id={item.queue_id}
+                    observation={(item as any).observation || ''}
+                    domain={(item as any).domain_id || 'Unknown'}
+                    onRespond={handleInsightRespond}
                   />
                 ))}
               </View>
-            )}
-            
-            {!showHistory && (
-              <Text style={styles.historyHint}>
-                {ACKNOWLEDGED_INSIGHTS.length} insights reviewed • Tap to expand
+            </View>
+          )}
+          
+          {/* Thread Insights Section */}
+          {threadInsights.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>🔍 Thread Observations</Text>
+              <Text style={styles.sectionDescription}>
+                Observations about others or dynamics—these stay in their threads.
               </Text>
-            )}
-          </View>
-        )}
-      </ScrollView>
+              <View style={styles.cardList}>
+                {threadInsights.map((item) => (
+                  <ThreadInsightCard
+                    key={item.queue_id}
+                    id={item.queue_id}
+                    observation={(item as any).observation || ''}
+                    threadTitle={(item as any).thread_title}
+                    onRespond={handleThreadInsightRespond}
+                  />
+                ))}
+              </View>
+            </View>
+          )}
+          
+          {/* Thread Suggestions Section */}
+          {threadSuggestions.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>🧵 Thread Suggestions</Text>
+              <View style={styles.cardList}>
+                {threadSuggestions.map((item) => (
+                  <ThreadSuggestion
+                    key={item.queue_id}
+                    id={item.queue_id}
+                    topic={(item as any).topic || ''}
+                    description={(item as any).description || ''}
+                    mentionCount={(item as any).mention_count || 0}
+                    onCreateThread={handleCreateThread}
+                    onDismiss={handleDismissThread}
+                  />
+                ))}
+              </View>
+            </View>
+          )}
+          
+          {totalPending === 0 && (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyIcon}>✨</Text>
+              <Text style={styles.emptyTitle}>All caught up</Text>
+              <Text style={styles.emptyText}>
+                New insights will appear here as we talk.
+              </Text>
+            </View>
+          )}
+          
+          {/* Previously Acknowledged Section */}
+          {acknowledgedInsights.length > 0 && (
+            <View style={styles.section}>
+              <TouchableOpacity 
+                style={styles.sectionHeader}
+                onPress={() => setShowHistory(!showHistory)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.sectionTitle}>📋 Previously Acknowledged</Text>
+                <Text style={styles.expandIcon}>{showHistory ? '−' : '+'}</Text>
+              </TouchableOpacity>
+              
+              {showHistory && (
+                <View style={styles.historyList}>
+                  {acknowledgedInsights.slice(0, 10).map((insight) => (
+                    <AcknowledgedInsight
+                      key={insight.id}
+                      observation={insight.observation}
+                      domain={insight.domain}
+                      response={insight.user_response as 'yes' | 'maybe' | 'no' | undefined}
+                      note={insight.user_note}
+                      date={insight.acknowledged_at 
+                        ? new Date(insight.acknowledged_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                        : undefined
+                      }
+                    />
+                  ))}
+                </View>
+              )}
+              
+              {!showHistory && (
+                <Text style={styles.historyHint}>
+                  {acknowledgedInsights.length} insights reviewed • Tap to expand
+                </Text>
+              )}
+            </View>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -293,6 +364,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: OraaColors.text,
+    marginBottom: 14,
+  },
+  sectionDescription: {
+    fontSize: 13,
+    color: OraaColors.textMuted,
+    marginTop: -10,
+    marginBottom: 14,
   },
   expandIcon: {
     fontSize: 20,
@@ -333,5 +411,107 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: OraaColors.textMuted,
     textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: OraaColors.textMuted,
+  },
+  // Thread Insight Card styles
+  threadInsightCard: {
+    backgroundColor: OraaColors.surface,
+    borderWidth: 1,
+    borderColor: 'rgba(147,112,219,0.20)',
+    borderRadius: Radii.xl,
+    padding: 16,
+  },
+  cardResponded: {
+    backgroundColor: 'rgba(74,222,128,0.08)',
+    borderColor: 'rgba(74,222,128,0.20)',
+  },
+  threadInsightHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  threadInsightBadge: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'rgba(147,112,219,0.9)',
+  },
+  threadName: {
+    fontSize: 11,
+    color: OraaColors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  threadInsightObservation: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: OraaColors.text,
+    marginBottom: 16,
+  },
+  threadInsightQuestion: {
+    fontSize: 13,
+    color: OraaColors.textMuted,
+    marginBottom: 12,
+  },
+  buttons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: Radii.md,
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  buttonYes: {
+    backgroundColor: 'rgba(74,222,128,0.10)',
+    borderColor: 'rgba(74,222,128,0.25)',
+  },
+  buttonMaybe: {
+    backgroundColor: 'rgba(250,204,21,0.10)',
+    borderColor: 'rgba(250,204,21,0.25)',
+  },
+  buttonNo: {
+    backgroundColor: 'rgba(248,113,113,0.10)',
+    borderColor: 'rgba(248,113,113,0.25)',
+  },
+  buttonText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  buttonTextYes: {
+    color: 'rgba(74,222,128,0.9)',
+  },
+  buttonTextMaybe: {
+    color: 'rgba(250,204,21,0.9)',
+  },
+  buttonTextNo: {
+    color: 'rgba(248,113,113,0.9)',
+  },
+  respondedContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 8,
+  },
+  checkmark: {
+    fontSize: 16,
+    color: 'rgba(74,222,128,0.9)',
+  },
+  respondedText: {
+    fontSize: 14,
+    color: 'rgba(74,222,128,0.9)',
+    fontWeight: '500',
   },
 });

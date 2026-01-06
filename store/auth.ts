@@ -1,8 +1,8 @@
+import { authAPI, UsageStatus } from '@/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { randomUUID } from 'expo-crypto';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Crypto from 'expo-crypto';
-import { authAPI, UsageStatus } from '@/api';
 
 interface AuthState {
   // State
@@ -49,7 +49,7 @@ export const useAuthStore = create<AuthState>()(
           // Get or create device ID
           let deviceId = get().deviceId;
           if (!deviceId) {
-            deviceId = Crypto.randomUUID();
+            deviceId = randomUUID();
             set({ deviceId });
           }
           
@@ -98,7 +98,7 @@ export const useAuthStore = create<AuthState>()(
             return;
           }
           
-          const deviceId = get().deviceId || Crypto.randomUUID();
+          const deviceId = get().deviceId || randomUUID();
           set({ deviceId });
           
           const response = await authAPI.getSession(deviceId);

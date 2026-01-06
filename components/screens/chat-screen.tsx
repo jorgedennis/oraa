@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { ChatHeader } from '@/components/chat/chat-header';
 import { ChatBubble, TypingIndicator } from '@/components/chat/chat-bubble';
 import { ChatInput } from '@/components/chat/chat-input';
-import { ThreadIndicator } from '@/components/chat/thread-indicator';
+import { ThreadContextBar } from '@/components/chat/thread-indicator';
+import { InsightReminderBubble } from '@/components/chat/insight-reminder-bubble';
 import { OraaColors } from '@/constants/theme';
 import { useChatStore, useAuthStore } from '@/store';
+import { useRouter } from 'expo-router';
 
 interface Message {
   id: string;
@@ -13,64 +15,19 @@ interface Message {
   isUser: boolean;
 }
 
-interface ActiveThread {
-  id: string;
-  title: string;
-}
-
-// Demo messages from the HTML template
-const DEMO_MESSAGES: Message[] = [
-  {
-    id: '1',
-    text: 'Hey. Want to start with the simplest version of it, just one sentence?',
-    isUser: false,
-  },
-  {
-    id: '2',
-    text: 'I feel on edge and I cannot shut my brain off.',
-    isUser: true,
-  },
-  {
-    id: '3',
-    text: 'Got it. When that happens, what is the first thing your mind keeps replaying?',
-    isUser: false,
-  },
-  {
-    id: '4',
-    text: 'That I am falling behind and everyone can tell.',
-    isUser: true,
-  },
-  {
-    id: '5',
-    text: "That sounds heavy. Let's slow it down: what would \"everyone can tell\" look like in a real moment? 🙂",
-    isUser: false,
-  },
-];
-
-// Demo active thread
-const DEMO_THREAD: ActiveThread = {
-  id: '1',
-  title: 'Career transition anxiety',
-};
-
 interface ChatScreenProps {
   onSave?: () => void;
   onMenuPress?: () => void;
-  onThreadPress?: (threadId: string) => void;
   messageLimit?: number;
-  initialMessages?: Message[];
-  activeThread?: ActiveThread | null;
 }
 
 export function ChatScreen({
   onSave,
   onMenuPress,
-  onThreadPress,
   messageLimit = 40,
-  initialMessages = [],
-  activeThread = null,
 }: ChatScreenProps) {
   const flatListRef = useRef<FlatList>(null);
+  const router = useRouter();
   
   // Get chat and auth state
   const { 
@@ -78,8 +35,13 @@ export function ChatScreen({
     isSending, 
     error: chatError,
     sendMessage, 
-    clearConversation,
-    setError 
+    setError,
+    activeThreads,
+    inferredThreads,
+    removeThreadContext,
+    acceptInferredThread,
+    currentReminder,
+    dismissReminder
   } = useChatStore();
   
   const { usageStatus } = useAuthStore();
@@ -117,10 +79,8 @@ export function ChatScreen({
     }
   };
   
-  const handleThreadPress = () => {
-    if (activeThread && onThreadPress) {
-      onThreadPress(activeThread.id);
-    }
+  const handleThreadPress = (threadId: string) => {
+    router.push(`/(drawer)/threads/${threadId}`);
   };
   
   const renderMessage = ({ item, index }: { item: Message; index: number }) => {
@@ -156,11 +116,22 @@ export function ChatScreen({
         onMenuPress={onMenuPress}
       />
       
-      {/* Thread indicator */}
-      {activeThread && (
-        <ThreadIndicator
-          threadTitle={activeThread.title}
-          onPress={handleThreadPress}
+      {/* Thread context bar */}
+      <ThreadContextBar
+        activeThreads={activeThreads}
+        inferredThreads={inferredThreads}
+        onRemoveThread={removeThreadContext}
+        onAcceptInferred={acceptInferredThread}
+        onThreadPress={handleThreadPress}
+      />
+      
+      {/* Soft reminder bubble */}
+      {currentReminder && !currentReminder.dismissed && (
+        <InsightReminderBubble
+          observation={currentReminder.observation}
+          domain={currentReminder.domain}
+          onDismiss={dismissReminder}
+          autoHideDelay={8000}
         />
       )}
       
@@ -184,7 +155,7 @@ export function ChatScreen({
       <ChatInput
         onSend={handleSend}
         placeholder="What's on your mind?"
-        helperLeft="Tap Save to keep this thread."
+        helperLeft={activeThreads.length > 0 ? `${activeThreads.length} thread${activeThreads.length > 1 ? 's' : ''} active` : "Tap Save to keep this thread."}
         helperRight="Ocean theme"
         disabled={isSending}
       />
