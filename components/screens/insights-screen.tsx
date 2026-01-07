@@ -190,15 +190,23 @@ export function InsightsScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>✨ New Insights</Text>
               <View style={styles.cardList}>
-                {selfInsights.map((item) => (
-                  <InsightCard
-                    key={item.queue_id}
-                    id={item.queue_id}
-                    observation={(item as any).observation || ''}
-                    domain={(item as any).domain_id || 'Unknown'}
-                    onRespond={handleInsightRespond}
-                  />
-                ))}
+                {selfInsights.map((item) => {
+                  const selfItem = item as any;
+                  return (
+                    <InsightCard
+                      key={item.queue_id}
+                      id={item.queue_id}
+                      observation={selfItem.observation || ''}
+                      domain={selfItem.domain_id || 'Unknown'}
+                      onRespond={handleInsightRespond}
+                      templateId={selfItem.template_id}
+                      isNovel={!selfItem.template_id}
+                      promotionReason={selfItem.promotion_reason}
+                      confidence={selfItem.confidence}
+                      evidenceSummary={selfItem.evidence_summary}
+                    />
+                  );
+                })}
               </View>
             </View>
           )}

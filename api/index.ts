@@ -86,6 +86,9 @@ export interface ThreadSuggestionsResponse {
   error?: string;
 }
 
+// Promotion reason type
+export type PromotionReason = 'slam_dunk' | 'within_session_repeat' | 'cross_session_recurrence';
+
 // Insight types
 export interface StagedItem {
   queue_id: string;
@@ -99,6 +102,11 @@ export interface StagedItem {
   topic?: string;
   description?: string;
   mention_count?: number;
+  // New template-based fields
+  template_id?: string;
+  confidence?: number;
+  promotion_reason?: PromotionReason;
+  evidence_summary?: string;
 }
 
 export interface DomainWithInsights {
@@ -115,6 +123,11 @@ export interface DomainWithInsights {
     detection_count: number;
     acknowledged_at?: string;
     thread_associations: Array<{ thread_id: string; thread_title: string; detected_at: string }>;
+    // New template-based fields
+    template_id?: string;
+    is_novel?: boolean;
+    detection_confidence?: number;
+    promotion_reason?: PromotionReason;
   }>;
 }
 
@@ -487,6 +500,32 @@ export const threadsAPI = {
   }
 };
 
+// Insight Advice types
+export type InsightAdviceSection = 
+  | 'what_this_means' 
+  | 'how_to_recognize_it' 
+  | 'what_to_watch_out_for' 
+  | 'relationship_effects' 
+  | 'the_upside' 
+  | 'practical_strategies';
+
+export interface InsightAdviceSectionContent {
+  section: InsightAdviceSection;
+  content: string;
+  display_order: number;
+}
+
+export interface InsightAdvice {
+  template_id: string;
+  sections: InsightAdviceSectionContent[];
+}
+
+export interface TemplateAdviceResponse {
+  success: boolean;
+  advice?: InsightAdvice;
+  error?: string;
+}
+
 // Insights API
 export const insightsAPI = {
   /**
@@ -581,6 +620,31 @@ export const insightsAPI = {
       return await response.json();
     } catch (error) {
       console.error('Delete insight error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Fetch advice for an insight template
+   */
+  async fetchTemplateAdvice(templateId: string): Promise<TemplateAdviceResponse> {
+    try {
+      const response = await fetch(`${API_URL}/insights`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'get_advice',
+          template_id: templateId
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Fetch template advice error:', error);
       throw error;
     }
   }

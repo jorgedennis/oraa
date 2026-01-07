@@ -22,6 +22,7 @@ export { InsightReminderBubble, CompactInsightReminder } from './chat/insight-re
 export { InsightCard } from './insights/insight-card';
 export { ThreadSuggestion } from './insights/thread-suggestion';
 export { AcknowledgedInsight } from './insights/acknowledged-insight';
+export { InsightAdviceModal } from './insights/insight-advice-modal';
 
 // Thread components
 export { ThreadCard } from './threads/thread-card';

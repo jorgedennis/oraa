@@ -5,6 +5,44 @@ import { insightsAPI } from '@/api';
 export type InsightType = 'self' | 'thread';
 export type InsightResponse = 'yes' | 'maybe' | 'no' | 'partially';
 export type InsightStatus = 'pending' | 'staged' | 'acknowledged' | 'dismissed';
+export type PromotionReason = 'slam_dunk' | 'within_session_repeat' | 'cross_session_recurrence';
+
+// Insight Advice types
+export type InsightAdviceSection = 
+  | 'what_this_means' 
+  | 'how_to_recognize_it' 
+  | 'what_to_watch_out_for' 
+  | 'relationship_effects' 
+  | 'the_upside' 
+  | 'practical_strategies';
+
+export interface InsightAdviceSectionContent {
+  section: InsightAdviceSection;
+  content: string;
+  display_order: number;
+}
+
+export interface InsightAdvice {
+  template_id: string;
+  sections: InsightAdviceSectionContent[];
+}
+
+// Human-friendly copy for promotion reasons
+export const PROMOTION_REASON_COPY: Record<PromotionReason, string> = {
+  slam_dunk: "This came through clearly in your recent conversation.",
+  within_session_repeat: "This pattern showed up a few times in your conversation.",
+  cross_session_recurrence: "This has come up across a few conversations recently."
+};
+
+// Section display names
+export const ADVICE_SECTION_TITLES: Record<InsightAdviceSection, string> = {
+  what_this_means: "What this means",
+  how_to_recognize_it: "How to recognize it",
+  what_to_watch_out_for: "What to watch out for",
+  relationship_effects: "How it affects relationships",
+  the_upside: "The upside",
+  practical_strategies: "Practical strategies"
+};
 
 export interface ThreadAssociation {
   thread_id: string;
@@ -22,6 +60,11 @@ export interface SelfInsight {
   detection_count: number;
   acknowledged_at?: string;
   thread_associations: ThreadAssociation[];
+  // New template-based fields
+  template_id?: string;
+  is_novel?: boolean; // Optional - defaults to false if not provided
+  detection_confidence?: number;
+  promotion_reason?: PromotionReason;
 }
 
 export interface DomainWithInsights {
@@ -42,6 +85,11 @@ export interface StagedSelfInsight {
   created_at: string;
   observation: string;
   domain_id: string;
+  // New template-based fields
+  template_id?: string;
+  confidence?: number;
+  promotion_reason?: PromotionReason;
+  evidence_summary?: string;
 }
 
 export interface StagedThreadInsight {
@@ -52,6 +100,11 @@ export interface StagedThreadInsight {
   thread_title?: string;
   created_at: string;
   observation: string;
+  // New template-based fields
+  template_id?: string;
+  confidence?: number;
+  promotion_reason?: PromotionReason;
+  evidence_summary?: string;
 }
 
 export interface StagedThreadSuggestion {
@@ -73,6 +126,11 @@ interface InsightsState {
   isLoadingQueue: boolean;
   isLoadingMap: boolean;
   error: string | null;
+  // Advice cache
+  adviceCache: Map<string, InsightAdvice>;
+  isLoadingAdvice: boolean;
+  // Currently selected insight for advice modal
+  selectedInsightForAdvice: { templateId: string | null; isNovel: boolean } | null;
   
   // Actions
   fetchStagingQueue: () => Promise<void>;
@@ -80,6 +138,10 @@ interface InsightsState {
   fetchMapInsights: () => Promise<void>;
   deleteInsight: (insightId: string) => Promise<void>;
   setError: (error: string | null) => void;
+  // Advice actions
+  fetchTemplateAdvice: (templateId: string) => Promise<InsightAdvice | null>;
+  openAdviceModal: (templateId: string | null, isNovel: boolean) => void;
+  closeAdviceModal: () => void;
 }
 
 // Domain configuration (matches database)
@@ -101,6 +163,10 @@ const generateDummyStagingQueue = (): StagedItem[] => [
     created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     observation: 'You tend to take on responsibility for fixing situations even when they\'re not yours to fix.',
     domain_id: 'relational',
+    template_id: 'over-responsibility',
+    confidence: 0.92,
+    promotion_reason: 'slam_dunk',
+    evidence_summary: 'You described stepping in to mediate your parents\' conflict even though it wasn\'t your role.',
   },
   {
     queue_id: 'q2',
@@ -109,6 +175,10 @@ const generateDummyStagingQueue = (): StagedItem[] => [
     created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
     observation: 'When you feel overwhelmed, your first instinct is to isolate rather than reach out.',
     domain_id: 'behavioral',
+    template_id: 'isolation-when-overwhelmed',
+    confidence: 0.78,
+    promotion_reason: 'within_session_repeat',
+    evidence_summary: 'This showed up twice—when discussing work stress and family dynamics.',
   },
   {
     queue_id: 'q3',
@@ -118,6 +188,8 @@ const generateDummyStagingQueue = (): StagedItem[] => [
     thread_title: 'Mom',
     created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
     observation: 'Mom tends to call when she\'s lonely, framing it as checking in on you.',
+    confidence: 0.85,
+    promotion_reason: 'cross_session_recurrence',
   },
   {
     queue_id: 'q4',
@@ -149,6 +221,9 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
           { thread_id: 'thread-1', thread_title: 'Mom', detected_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() },
           { thread_id: 'thread-4', thread_title: 'Alex', detected_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString() },
         ],
+        is_novel: false,
+        template_id: 'anticipating-needs',
+        promotion_reason: 'cross_session_recurrence',
       },
       {
         id: 'i2',
@@ -162,6 +237,9 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         thread_associations: [
           { thread_id: 'thread-1', thread_title: 'Mom', detected_at: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString() },
         ],
+        is_novel: false,
+        template_id: 'conflict-avoidance-resentment',
+        promotion_reason: 'within_session_repeat',
       },
     ],
   },
@@ -181,6 +259,9 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         thread_associations: [
           { thread_id: 'thread-1', thread_title: 'Mom', detected_at: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString() },
         ],
+        is_novel: false,
+        template_id: 'self-prioritization-guilt',
+        promotion_reason: 'slam_dunk',
       },
     ],
   },
@@ -200,6 +281,7 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         thread_associations: [
           { thread_id: 'thread-2', thread_title: 'Career identity', detected_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString() },
         ],
+        is_novel: true, // Example of a novel insight
       },
     ],
   },
@@ -220,16 +302,21 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         thread_associations: [
           { thread_id: 'thread-1', thread_title: 'Mom', detected_at: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString() },
         ],
+        is_novel: false,
+        template_id: 'guilt-chest-tension',
+        promotion_reason: 'cross_session_recurrence',
       },
       {
         id: 'i6',
         observation: 'Stress manifests physically before you consciously recognize it—tight chest, shallow breathing',
         domain_id: 'somatic',
-        user_response: 'yes',
+        user_response: 'no', // Example of a dismissed insight
         first_detected_at: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 4,
         acknowledged_at: new Date(Date.now() - 48 * 24 * 60 * 60 * 1000).toISOString(),
         thread_associations: [],
+        is_novel: false,
+        template_id: 'somatic-stress-awareness',
       },
     ],
   },
@@ -249,6 +336,9 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         thread_associations: [
           { thread_id: 'thread-4', thread_title: 'Alex', detected_at: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString() },
         ],
+        is_novel: false,
+        template_id: 'over-functioning-withdrawal',
+        promotion_reason: 'within_session_repeat',
       },
     ],
   },
@@ -261,6 +351,9 @@ export const useInsightsStore = create<InsightsState>((set, get) => ({
   isLoadingQueue: false,
   isLoadingMap: false,
   error: null,
+  adviceCache: new Map(),
+  isLoadingAdvice: false,
+  selectedInsightForAdvice: null,
   
   // Fetch staging queue
   fetchStagingQueue: async () => {
@@ -270,7 +363,8 @@ export const useInsightsStore = create<InsightsState>((set, get) => ({
       const response = await insightsAPI.fetchStagingQueue();
       
       if (response.success && response.items) {
-        set({ stagingQueue: response.items, isLoadingQueue: false });
+        // Cast API response to store types
+        set({ stagingQueue: response.items as unknown as StagedItem[], isLoadingQueue: false });
       } else {
         throw new Error(response.error || 'Failed to fetch staging queue');
       }
@@ -324,7 +418,8 @@ export const useInsightsStore = create<InsightsState>((set, get) => ({
       const response = await insightsAPI.fetchMapInsights();
       
       if (response.success && response.domains) {
-        set({ mapInsights: response.domains, isLoadingMap: false });
+        // Cast API response to store types
+        set({ mapInsights: response.domains as unknown as DomainWithInsights[], isLoadingMap: false });
       } else {
         throw new Error(response.error || 'Failed to fetch map insights');
       }
@@ -373,6 +468,45 @@ export const useInsightsStore = create<InsightsState>((set, get) => ({
   // Set error
   setError: (error: string | null) => {
     set({ error });
+  },
+  
+  // Fetch template advice
+  fetchTemplateAdvice: async (templateId: string) => {
+    // Check cache first
+    const cached = get().adviceCache.get(templateId);
+    if (cached) {
+      return cached;
+    }
+    
+    try {
+      set({ isLoadingAdvice: true });
+      
+      const response = await insightsAPI.fetchTemplateAdvice(templateId);
+      
+      if (response.success && response.advice) {
+        // Cache the result
+        const newCache = new Map(get().adviceCache);
+        newCache.set(templateId, response.advice);
+        set({ adviceCache: newCache, isLoadingAdvice: false });
+        return response.advice;
+      } else {
+        throw new Error(response.error || 'Failed to fetch advice');
+      }
+    } catch (error: any) {
+      console.error('Fetch template advice error:', error);
+      set({ isLoadingAdvice: false });
+      return null;
+    }
+  },
+  
+  // Open advice modal
+  openAdviceModal: (templateId: string | null, isNovel: boolean) => {
+    set({ selectedInsightForAdvice: { templateId, isNovel } });
+  },
+  
+  // Close advice modal
+  closeAdviceModal: () => {
+    set({ selectedInsightForAdvice: null });
   },
 }));
 

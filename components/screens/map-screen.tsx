@@ -5,6 +5,7 @@ import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useInsightsStore, DomainWithInsights, SelfInsight } from '@/store';
 import { OraaColors, Radii, Shadows } from '@/constants/theme';
+import { InsightAdviceModal } from '@/components/insights/insight-advice-modal';
 
 // Domain Card Component
 interface DomainCardProps {
@@ -15,7 +16,15 @@ interface DomainCardProps {
 
 function DomainCard({ domain, onInsightPress, onDeleteInsight }: DomainCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const insightCount = domain.insights.length;
+  const [showDismissed, setShowDismissed] = useState(false);
+  
+  // Separate insights into active and dismissed (user said "No")
+  const activeInsights = domain.insights.filter(i => i.user_response !== 'no');
+  const dismissedInsights = domain.insights.filter(i => i.user_response === 'no');
+  
+  const activeCount = activeInsights.length;
+  const dismissedCount = dismissedInsights.length;
+  const totalCount = domain.insights.length;
   
   return (
     <View style={styles.domainCard}>
@@ -29,7 +38,8 @@ function DomainCard({ domain, onInsightPress, onDeleteInsight }: DomainCardProps
           <View>
             <Text style={styles.domainName}>{domain.domain_name}</Text>
             <Text style={styles.insightCount}>
-              {insightCount} {insightCount === 1 ? 'insight' : 'insights'}
+              {activeCount} {activeCount === 1 ? 'insight' : 'insights'}
+              {dismissedCount > 0 && ` • ${dismissedCount} dismissed`}
             </Text>
           </View>
         </View>
@@ -38,47 +48,88 @@ function DomainCard({ domain, onInsightPress, onDeleteInsight }: DomainCardProps
       
       {isExpanded && (
         <View style={styles.insightsList}>
-          {insightCount === 0 ? (
+          {totalCount === 0 ? (
             <Text style={styles.emptyDomain}>No insights in this domain yet.</Text>
           ) : (
-            domain.insights.map((insight) => (
-              <TouchableOpacity
-                key={insight.id}
-                style={styles.insightItem}
-                onPress={() => onInsightPress(insight)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.insightContent}>
-                  <Text style={styles.insightText}>{insight.observation}</Text>
-                  <View style={styles.insightMeta}>
-                    {insight.user_response && (
-                      <View style={[
-                        styles.responseBadge,
-                        insight.user_response === 'yes' && styles.responseBadgeYes,
-                        insight.user_response === 'maybe' && styles.responseBadgeMaybe,
-                        insight.user_response === 'no' && styles.responseBadgeNo,
-                      ]}>
-                        <Text style={[
-                          styles.responseBadgeText,
-                          insight.user_response === 'yes' && styles.responseBadgeTextYes,
-                          insight.user_response === 'maybe' && styles.responseBadgeTextMaybe,
-                          insight.user_response === 'no' && styles.responseBadgeTextNo,
+            <>
+              {/* Active insights */}
+              {activeInsights.map((insight) => (
+                <TouchableOpacity
+                  key={insight.id}
+                  style={styles.insightItem}
+                  onPress={() => onInsightPress(insight)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.insightContent}>
+                    <Text style={styles.insightText}>{insight.observation}</Text>
+                    <View style={styles.insightMeta}>
+                      {insight.user_response && (
+                        <View style={[
+                          styles.responseBadge,
+                          insight.user_response === 'yes' && styles.responseBadgeYes,
+                          insight.user_response === 'maybe' && styles.responseBadgeMaybe,
                         ]}>
-                          {insight.user_response === 'yes' ? 'Agreed' : 
-                           insight.user_response === 'maybe' ? 'Maybe' : 'Disagreed'}
+                          <Text style={[
+                            styles.responseBadgeText,
+                            insight.user_response === 'yes' && styles.responseBadgeTextYes,
+                            insight.user_response === 'maybe' && styles.responseBadgeTextMaybe,
+                          ]}>
+                            {insight.user_response === 'yes' ? 'Agreed' : 'Maybe'}
+                          </Text>
+                        </View>
+                      )}
+                      {insight.is_novel && (
+                        <View style={styles.novelBadge}>
+                          <Text style={styles.novelBadgeText}>Unique</Text>
+                        </View>
+                      )}
+                      {insight.thread_associations.length > 0 && (
+                        <Text style={styles.threadCount}>
+                          {insight.thread_associations.length} {insight.thread_associations.length === 1 ? 'thread' : 'threads'}
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                  <Text style={styles.chevron}>›</Text>
+                </TouchableOpacity>
+              ))}
+              
+              {/* Dismissed insights toggle */}
+              {dismissedCount > 0 && (
+                <TouchableOpacity 
+                  style={styles.dismissedToggle}
+                  onPress={() => setShowDismissed(!showDismissed)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.dismissedToggleText}>
+                    {showDismissed ? 'Hide' : 'Show'} {dismissedCount} dismissed {dismissedCount === 1 ? 'insight' : 'insights'}
+                  </Text>
+                  <Text style={styles.dismissedToggleIcon}>{showDismissed ? '−' : '+'}</Text>
+                </TouchableOpacity>
+              )}
+              
+              {/* Dismissed insights (collapsed by default) */}
+              {showDismissed && dismissedInsights.map((insight) => (
+                <TouchableOpacity
+                  key={insight.id}
+                  style={[styles.insightItem, styles.insightItemDismissed]}
+                  onPress={() => onInsightPress(insight)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.insightContent}>
+                    <Text style={[styles.insightText, styles.insightTextDismissed]}>{insight.observation}</Text>
+                    <View style={styles.insightMeta}>
+                      <View style={[styles.responseBadge, styles.responseBadgeNo]}>
+                        <Text style={[styles.responseBadgeText, styles.responseBadgeTextNo]}>
+                          Disagreed
                         </Text>
                       </View>
-                    )}
-                    {insight.thread_associations.length > 0 && (
-                      <Text style={styles.threadCount}>
-                        {insight.thread_associations.length} {insight.thread_associations.length === 1 ? 'thread' : 'threads'}
-                      </Text>
-                    )}
+                    </View>
                   </View>
-                </View>
-                <Text style={styles.chevron}>›</Text>
-              </TouchableOpacity>
-            ))
+                  <Text style={[styles.chevron, styles.chevronDismissed]}>›</Text>
+                </TouchableOpacity>
+              ))}
+            </>
           )}
         </View>
       )}
@@ -92,6 +143,8 @@ export function MapScreen() {
   const router = useRouter();
   
   const { mapInsights, isLoadingMap, fetchMapInsights, deleteInsight } = useInsightsStore();
+  const [selectedInsight, setSelectedInsight] = useState<SelfInsight | null>(null);
+  const [showAdviceModal, setShowAdviceModal] = useState(false);
   
   useEffect(() => {
     fetchMapInsights();
@@ -102,11 +155,9 @@ export function MapScreen() {
   };
   
   const handleInsightPress = (insight: SelfInsight) => {
-    // Navigate to insight detail screen
-    router.push({
-      pathname: '/(drawer)/map',
-      params: { insightId: insight.id }
-    });
+    // Open advice modal for the insight
+    setSelectedInsight(insight);
+    setShowAdviceModal(true);
   };
   
   const handleDeleteInsight = async (insightId: string) => {
@@ -146,20 +197,20 @@ export function MapScreen() {
           <Text style={styles.loadingText}>Loading your Map...</Text>
         </View>
       ) : (
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingBottom: insets.bottom + 20 },
-          ]}
-          showsVerticalScrollIndicator={false}
-        >
-          <Text style={styles.intro}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 20 },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.intro}>
             Your Map is Oraa's understanding of you across five domains. 
             Self insights are portable patterns that apply across different areas of your life.
-          </Text>
-          
-          <View style={styles.domainList}>
+        </Text>
+        
+        <View style={styles.domainList}>
             {mapInsights.map((domain) => (
               <DomainCard 
                 key={domain.domain_id} 
@@ -167,8 +218,8 @@ export function MapScreen() {
                 onInsightPress={handleInsightPress}
                 onDeleteInsight={handleDeleteInsight}
               />
-            ))}
-          </View>
+          ))}
+        </View>
           
           {totalInsights === 0 && (
             <View style={styles.emptyState}>
@@ -182,6 +233,17 @@ export function MapScreen() {
           )}
         </ScrollView>
       )}
+      
+      {/* Advice Modal */}
+      <InsightAdviceModal
+        visible={showAdviceModal}
+        templateId={selectedInsight?.template_id || null}
+        isNovel={selectedInsight?.is_novel ?? false}
+        onClose={() => {
+          setShowAdviceModal(false);
+          setSelectedInsight(null);
+        }}
+      />
     </View>
   );
 }
@@ -361,6 +423,45 @@ const styles = StyleSheet.create({
   },
   chevron: {
     fontSize: 20,
+    color: OraaColors.textMuted,
+  },
+  chevronDismissed: {
+    opacity: 0.5,
+  },
+  novelBadge: {
+    backgroundColor: 'rgba(147,112,219,0.15)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: Radii.sm,
+  },
+  novelBadgeText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: 'rgba(147,112,219,0.9)',
+  },
+  insightItemDismissed: {
+    opacity: 0.6,
+    backgroundColor: OraaColors.surfaceSubtle,
+  },
+  insightTextDismissed: {
+    color: OraaColors.textMuted,
+  },
+  dismissedToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: OraaColors.stroke,
+    backgroundColor: OraaColors.surfaceSubtle,
+  },
+  dismissedToggleText: {
+    fontSize: 13,
+    color: OraaColors.textMuted,
+    fontStyle: 'italic',
+  },
+  dismissedToggleIcon: {
+    fontSize: 16,
     color: OraaColors.textMuted,
   },
   emptyState: {
