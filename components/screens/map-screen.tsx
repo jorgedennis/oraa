@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { useInsightsStore, DomainWithInsights, SelfInsight } from '@/store';
 import { OraaColors, Radii, Shadows } from '@/constants/theme';
 import { InsightAdviceModal } from '@/components/insights/insight-advice-modal';
+import { DOMAIN_DESCRIPTIONS, SUBDOMAIN_DESCRIPTIONS } from '@/constants/domain-definitions';
 
 // Domain Card Component
 interface DomainCardProps {
@@ -37,6 +38,8 @@ function DomainCard({ domain, onInsightPress, onDeleteInsight }: DomainCardProps
   const totalCount = domain.insights.length;
   const categoryKeys = Object.keys(insightsByCategory);
   
+  const domainDescription = DOMAIN_DESCRIPTIONS[domain.domain_id] || '';
+  
   return (
     <View style={styles.domainCard}>
       <TouchableOpacity 
@@ -46,8 +49,11 @@ function DomainCard({ domain, onInsightPress, onDeleteInsight }: DomainCardProps
       >
         <View style={styles.domainHeaderLeft}>
           <Text style={styles.domainIcon}>{domain.domain_icon}</Text>
-          <View>
+          <View style={styles.domainHeaderText}>
             <Text style={styles.domainName}>{domain.domain_name}</Text>
+            {isExpanded && domainDescription ? (
+              <Text style={styles.domainDescription}>{domainDescription}</Text>
+            ) : null}
             <Text style={styles.insightCount}>
               {activeCount} {activeCount === 1 ? 'insight' : 'insights'}
               {dismissedCount > 0 && ` • ${dismissedCount} dismissed`}
@@ -58,59 +64,96 @@ function DomainCard({ domain, onInsightPress, onDeleteInsight }: DomainCardProps
       </TouchableOpacity>
       
       {isExpanded && (
-        <View style={styles.insightsList}>
+        <View style={styles.domainContent}>
+          {/* Domain synopsis placeholder */}
+          {activeCount > 0 && (
+            <View style={styles.synopsisContainer}>
+              <Text style={styles.synopsisLabel}>Your patterns in this domain</Text>
+              <Text style={styles.synopsisText}>
+                {/* TODO: Generate personalized synopsis from insights */}
+                Your insights here show patterns across {categoryKeys.length} {categoryKeys.length === 1 ? 'area' : 'areas'}.
+              </Text>
+            </View>
+          )}
+          
           {totalCount === 0 ? (
             <Text style={styles.emptyDomain}>No insights in this domain yet.</Text>
           ) : (
             <>
-              {/* Grouped by category */}
-              {categoryKeys.map((categoryKey) => (
-                <View key={categoryKey} style={styles.categoryGroup}>
-                  {categoryKeys.length > 1 && (
-                    <Text style={styles.categoryLabel}>{categoryKey}</Text>
-                  )}
-                  {insightsByCategory[categoryKey].map((insight) => (
-                    <TouchableOpacity
-                      key={insight.id}
-                      style={styles.insightItem}
-                      onPress={() => onInsightPress(insight)}
-                      activeOpacity={0.7}
-                    >
-                      <View style={styles.insightContent}>
-                        <Text style={styles.insightText}>{insight.observation}</Text>
-                        <View style={styles.insightMeta}>
-                          {insight.user_response && (
-                            <View style={[
-                              styles.responseBadge,
-                              insight.user_response === 'yes' && styles.responseBadgeYes,
-                              insight.user_response === 'maybe' && styles.responseBadgeMaybe,
-                            ]}>
-                              <Text style={[
-                                styles.responseBadgeText,
-                                insight.user_response === 'yes' && styles.responseBadgeTextYes,
-                                insight.user_response === 'maybe' && styles.responseBadgeTextMaybe,
-                              ]}>
-                                {insight.user_response === 'yes' ? 'Agreed' : 'Maybe'}
-                              </Text>
-                            </View>
-                          )}
-                          {insight.is_novel && (
-                            <View style={styles.novelBadge}>
-                              <Text style={styles.novelBadgeText}>Unique</Text>
-                            </View>
-                          )}
-                          {insight.thread_associations.length > 0 && (
-                            <Text style={styles.threadCount}>
-                              {insight.thread_associations.length} {insight.thread_associations.length === 1 ? 'thread' : 'threads'}
-                            </Text>
-                          )}
-                        </View>
+              {/* Grouped by category/subdomain */}
+              {categoryKeys.map((categoryKey) => {
+                const categoryInsights = insightsByCategory[categoryKey];
+                const subdomainDesc = SUBDOMAIN_DESCRIPTIONS[domain.domain_id]?.[categoryKey] || '';
+                const categoryCount = categoryInsights.length;
+                
+                return (
+                  <View key={categoryKey} style={styles.categoryGroup}>
+                    <View style={styles.categoryHeader}>
+                      <Text style={styles.categoryLabel}>{categoryKey}</Text>
+                      {subdomainDesc && (
+                        <Text style={styles.categoryDescription}>{subdomainDesc}</Text>
+                      )}
+                      <Text style={styles.categoryInsightCount}>
+                        {categoryCount} {categoryCount === 1 ? 'insight' : 'insights'}
+                      </Text>
+                    </View>
+                    
+                    {/* Category synopsis placeholder */}
+                    {categoryCount > 0 && (
+                      <View style={styles.categorySynopsisContainer}>
+                        <Text style={styles.categorySynopsisText}>
+                          {/* TODO: Generate personalized synopsis for this category */}
+                          Your patterns here show {categoryCount === 1 ? 'one clear pattern' : `${categoryCount} related patterns`}.
+                        </Text>
                       </View>
-                      <Text style={styles.chevron}>›</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              ))}
+                    )}
+                    
+                    {/* Insights list */}
+                    <View style={styles.categoryInsightsList}>
+                      {categoryInsights.map((insight) => (
+                        <TouchableOpacity
+                          key={insight.id}
+                          style={styles.insightItem}
+                          onPress={() => onInsightPress(insight)}
+                          activeOpacity={0.7}
+                        >
+                          <View style={styles.insightContent}>
+                            <Text style={styles.insightText}>{insight.observation}</Text>
+                            <View style={styles.insightMeta}>
+                              {insight.user_response && (
+                                <View style={[
+                                  styles.responseBadge,
+                                  insight.user_response === 'yes' && styles.responseBadgeYes,
+                                  insight.user_response === 'maybe' && styles.responseBadgeMaybe,
+                                ]}>
+                                  <Text style={[
+                                    styles.responseBadgeText,
+                                    insight.user_response === 'yes' && styles.responseBadgeTextYes,
+                                    insight.user_response === 'maybe' && styles.responseBadgeTextMaybe,
+                                  ]}>
+                                    {insight.user_response === 'yes' ? 'Agreed' : 'Maybe'}
+                                  </Text>
+                                </View>
+                              )}
+                              {insight.is_novel && (
+                                <View style={styles.novelBadge}>
+                                  <Text style={styles.novelBadgeText}>Unique</Text>
+                                </View>
+                              )}
+                              {insight.thread_associations.length > 0 && (
+                                <Text style={styles.threadCount}>
+                                  {insight.thread_associations.length} {insight.thread_associations.length === 1 ? 'thread' : 'threads'}
+                                </Text>
+                              )}
+                            </View>
+                          </View>
+                          <Text style={styles.chevron}>›</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </View>
+                );
+              })}
               
               {/* Dismissed insights toggle */}
               {dismissedCount > 0 && (
@@ -424,21 +467,56 @@ const styles = StyleSheet.create({
   },
   domainHeaderLeft: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 12,
+    flex: 1,
+  },
+  domainHeaderText: {
+    flex: 1,
   },
   domainIcon: {
     fontSize: 24,
+    marginTop: 2,
   },
   domainName: {
     fontSize: 16,
     fontWeight: '600',
     color: OraaColors.text,
   },
+  domainDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: OraaColors.textSub,
+    marginTop: 4,
+  },
   insightCount: {
     fontSize: 13,
     color: OraaColors.textMuted,
-    marginTop: 2,
+    marginTop: 4,
+  },
+  domainContent: {
+    paddingTop: 12,
+  },
+  synopsisContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: OraaColors.stroke,
+    marginBottom: 12,
+  },
+  synopsisLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: OraaColors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 6,
+  },
+  synopsisText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: OraaColors.textSub,
+    fontStyle: 'italic',
   },
   expandIcon: {
     fontSize: 20,
@@ -578,16 +656,43 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   categoryGroup: {
+    marginBottom: 16,
+    paddingHorizontal: 16,
+  },
+  categoryHeader: {
     marginBottom: 8,
   },
   categoryLabel: {
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: '600',
+    color: OraaColors.text,
+    marginBottom: 4,
+  },
+  categoryDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: OraaColors.textSub,
+    marginBottom: 6,
+  },
+  categoryInsightCount: {
+    fontSize: 12,
     color: OraaColors.textMuted,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    paddingHorizontal: 14,
-    paddingTop: 12,
-    paddingBottom: 6,
+    fontWeight: '500',
+  },
+  categorySynopsisContainer: {
+    marginBottom: 12,
+    paddingLeft: 8,
+    borderLeftWidth: 2,
+    borderLeftColor: OraaColors.blueBorderSoft,
+  },
+  categorySynopsisText: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: OraaColors.textSub,
+    fontStyle: 'italic',
+    paddingLeft: 8,
+  },
+  categoryInsightsList: {
+    gap: 0,
   },
 });

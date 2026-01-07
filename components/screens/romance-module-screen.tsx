@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { useInsightsStore, SelfInsight } from '@/store';
 import { OraaColors, Radii, Shadows } from '@/constants/theme';
 import { InsightAdviceModal } from '@/components/insights/insight-advice-modal';
+import { ROMANCE_MODULE_DESCRIPTION, ROMANCE_SUBDOMAIN_DESCRIPTIONS } from '@/constants/domain-definitions';
 
 // Romance subdomains (from INSIGHTS_LIBRARY_STRUCTURE.md)
 const ROMANCE_SUBDOMAINS = [
@@ -30,6 +31,7 @@ function SubdomainCard({ subdomain, insights, onInsightPress }: SubdomainCardPro
   
   const activeInsights = insights.filter(i => i.user_response !== 'no');
   const activeCount = activeInsights.length;
+  const subdomainDescription = ROMANCE_SUBDOMAIN_DESCRIPTIONS[subdomain.slug] || '';
   
   return (
     <View style={styles.subdomainCard}>
@@ -40,8 +42,11 @@ function SubdomainCard({ subdomain, insights, onInsightPress }: SubdomainCardPro
       >
         <View style={styles.subdomainHeaderLeft}>
           <Text style={styles.subdomainIcon}>{subdomain.icon}</Text>
-          <View>
+          <View style={styles.subdomainHeaderText}>
             <Text style={styles.subdomainName}>{subdomain.name}</Text>
+            {isExpanded && subdomainDescription ? (
+              <Text style={styles.subdomainDescription}>{subdomainDescription}</Text>
+            ) : null}
             <Text style={styles.insightCount}>
               {activeCount} {activeCount === 1 ? 'insight' : 'insights'}
             </Text>
@@ -51,40 +56,53 @@ function SubdomainCard({ subdomain, insights, onInsightPress }: SubdomainCardPro
       </TouchableOpacity>
       
       {isExpanded && (
-        <View style={styles.insightsList}>
+        <View style={styles.subdomainContent}>
+          {/* Subdomain synopsis placeholder */}
+          {activeCount > 0 && (
+            <View style={styles.synopsisContainer}>
+              <Text style={styles.synopsisLabel}>Your patterns in this area</Text>
+              <Text style={styles.synopsisText}>
+                {/* TODO: Generate personalized synopsis from insights */}
+                Your insights here show {activeCount === 1 ? 'one clear pattern' : `${activeCount} related patterns`} in romantic relationships.
+              </Text>
+            </View>
+          )}
+          
           {activeInsights.length === 0 ? (
             <Text style={styles.emptySubdomain}>No insights in this area yet.</Text>
           ) : (
-            activeInsights.map((insight) => (
-              <TouchableOpacity
-                key={insight.id}
-                style={styles.insightItem}
-                onPress={() => onInsightPress(insight)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.insightContent}>
-                  <Text style={styles.insightText}>{insight.observation}</Text>
-                  <View style={styles.insightMeta}>
-                    {insight.user_response && (
-                      <View style={[
-                        styles.responseBadge,
-                        insight.user_response === 'yes' && styles.responseBadgeYes,
-                        insight.user_response === 'maybe' && styles.responseBadgeMaybe,
-                      ]}>
-                        <Text style={[
-                          styles.responseBadgeText,
-                          insight.user_response === 'yes' && styles.responseBadgeTextYes,
-                          insight.user_response === 'maybe' && styles.responseBadgeTextMaybe,
+            <View style={styles.insightsList}>
+              {activeInsights.map((insight) => (
+                <TouchableOpacity
+                  key={insight.id}
+                  style={styles.insightItem}
+                  onPress={() => onInsightPress(insight)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.insightContent}>
+                    <Text style={styles.insightText}>{insight.observation}</Text>
+                    <View style={styles.insightMeta}>
+                      {insight.user_response && (
+                        <View style={[
+                          styles.responseBadge,
+                          insight.user_response === 'yes' && styles.responseBadgeYes,
+                          insight.user_response === 'maybe' && styles.responseBadgeMaybe,
                         ]}>
-                          {insight.user_response === 'yes' ? 'Agreed' : 'Maybe'}
-                        </Text>
-                      </View>
-                    )}
+                          <Text style={[
+                            styles.responseBadgeText,
+                            insight.user_response === 'yes' && styles.responseBadgeTextYes,
+                            insight.user_response === 'maybe' && styles.responseBadgeTextMaybe,
+                          ]}>
+                            {insight.user_response === 'yes' ? 'Agreed' : 'Maybe'}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
                   </View>
-                </View>
-                <Text style={styles.chevron}>›</Text>
-              </TouchableOpacity>
-            ))
+                  <Text style={styles.chevron}>›</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           )}
         </View>
       )}
@@ -128,7 +146,14 @@ export function RomanceModuleScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <View style={styles.headerLeft}>
+        <View style={styles.headerTop}>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => router.back()}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.backButtonText}>‹</Text>
+          </TouchableOpacity>
           <TouchableOpacity 
             style={styles.menuButton} 
             onPress={openDrawer}
@@ -138,12 +163,13 @@ export function RomanceModuleScreen() {
             <View style={[styles.menuLine, styles.menuLineShort]} />
             <View style={styles.menuLine} />
           </TouchableOpacity>
-          <View>
-            <Text style={styles.title}>Romance & Love</Text>
-            <Text style={styles.subtitle}>
-              {ROMANCE_SUBDOMAINS.length} areas • {totalInsights} insights
-            </Text>
-          </View>
+        </View>
+        <View style={styles.headerContent}>
+          <Text style={styles.title}>Romance & Love</Text>
+          <Text style={styles.moduleDescription}>{ROMANCE_MODULE_DESCRIPTION}</Text>
+          <Text style={styles.subtitle}>
+            {ROMANCE_SUBDOMAINS.length} areas • {totalInsights} insights
+          </Text>
         </View>
       </View>
       
@@ -162,9 +188,16 @@ export function RomanceModuleScreen() {
           ]}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.intro}>
-            Patterns in romantic relationships and partnerships. A focused exploration of how you show up in romantic contexts.
-          </Text>
+          {/* Module synopsis placeholder */}
+          {totalInsights > 0 && (
+            <View style={styles.moduleSynopsisContainer}>
+              <Text style={styles.synopsisLabel}>Your patterns in romantic relationships</Text>
+              <Text style={styles.synopsisText}>
+                {/* TODO: Generate personalized synopsis from romance insights */}
+                Your insights here show patterns across {Object.values(subdomainInsights).filter(insights => insights.length > 0).length} {Object.values(subdomainInsights).filter(insights => insights.length > 0).length === 1 ? 'area' : 'areas'} of romantic relationships.
+              </Text>
+            </View>
+          )}
           
           <View style={styles.subdomainList}>
             {ROMANCE_SUBDOMAINS.map((subdomain) => (
@@ -214,10 +247,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: OraaColors.stroke,
   },
-  headerLeft: {
+  headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
+    gap: 12,
+    marginBottom: 12,
+  },
+  backButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backButtonText: {
+    fontSize: 24,
+    color: OraaColors.text,
+    fontWeight: '300',
+  },
+  headerContent: {
+    paddingLeft: 44,
   },
   menuButton: {
     width: 32,
@@ -240,10 +288,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: OraaColors.text,
   },
+  moduleDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: OraaColors.textSub,
+    marginTop: 4,
+  },
   subtitle: {
     fontSize: 13,
     color: OraaColors.textMuted,
-    marginTop: 2,
+    marginTop: 6,
   },
   scrollView: {
     flex: 1,
@@ -251,11 +305,27 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 18,
   },
-  intro: {
+  moduleSynopsisContainer: {
+    marginBottom: 24,
+    padding: 16,
+    backgroundColor: OraaColors.surfaceSubtle,
+    borderRadius: Radii.md,
+    borderWidth: 1,
+    borderColor: OraaColors.stroke,
+  },
+  synopsisLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: OraaColors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 6,
+  },
+  synopsisText: {
     fontSize: 14,
     lineHeight: 20,
     color: OraaColors.textSub,
-    marginBottom: 20,
+    fontStyle: 'italic',
   },
   subdomainList: {
     gap: 12,
@@ -286,21 +356,42 @@ const styles = StyleSheet.create({
   },
   subdomainHeaderLeft: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 12,
+    flex: 1,
+  },
+  subdomainHeaderText: {
+    flex: 1,
   },
   subdomainIcon: {
     fontSize: 24,
+    marginTop: 2,
   },
   subdomainName: {
     fontSize: 16,
     fontWeight: '600',
     color: OraaColors.text,
   },
+  subdomainDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: OraaColors.textSub,
+    marginTop: 4,
+  },
   insightCount: {
     fontSize: 13,
     color: OraaColors.textMuted,
-    marginTop: 2,
+    marginTop: 4,
+  },
+  subdomainContent: {
+    paddingTop: 12,
+  },
+  synopsisContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: OraaColors.stroke,
+    marginBottom: 12,
   },
   expandIcon: {
     fontSize: 20,
