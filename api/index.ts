@@ -107,6 +107,9 @@ export interface StagedItem {
   confidence?: number;
   promotion_reason?: PromotionReason;
   evidence_summary?: string;
+  // Re-surface tracking (user previously said "No")
+  is_resurface?: boolean;
+  no_response_count?: number;
 }
 
 export interface DomainWithInsights {

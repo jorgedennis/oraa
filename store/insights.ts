@@ -34,6 +34,9 @@ export const PROMOTION_REASON_COPY: Record<PromotionReason, string> = {
   cross_session_recurrence: "This has come up across a few conversations recently."
 };
 
+// Copy for re-surfaced insights (user previously said "No")
+export const RESURFACE_COPY = "This pattern keeps showing up. Worth another look?";
+
 // Section display names
 export const ADVICE_SECTION_TITLES: Record<InsightAdviceSection, string> = {
   what_this_means: "What this means",
@@ -90,6 +93,9 @@ export interface StagedSelfInsight {
   confidence?: number;
   promotion_reason?: PromotionReason;
   evidence_summary?: string;
+  // Re-surface tracking (user previously said "No")
+  is_resurface?: boolean;
+  no_response_count?: number;
 }
 
 export interface StagedThreadInsight {
@@ -105,6 +111,9 @@ export interface StagedThreadInsight {
   confidence?: number;
   promotion_reason?: PromotionReason;
   evidence_summary?: string;
+  // Re-surface tracking (user previously said "No")
+  is_resurface?: boolean;
+  no_response_count?: number;
 }
 
 export interface StagedThreadSuggestion {
@@ -179,6 +188,19 @@ const generateDummyStagingQueue = (): StagedItem[] => [
     confidence: 0.78,
     promotion_reason: 'within_session_repeat',
     evidence_summary: 'This showed up twice—when discussing work stress and family dynamics.',
+  },
+  {
+    queue_id: 'q5',
+    item_type: 'self_insight',
+    item_id: 'staged-resurface-1',
+    created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+    observation: 'You tend to minimize your own needs to keep the peace.',
+    domain_id: 'relational',
+    template_id: 'minimizing-needs',
+    confidence: 0.72,
+    evidence_summary: 'This has come up 3 more times since you last saw it.',
+    is_resurface: true,
+    no_response_count: 1,
   },
   {
     queue_id: 'q3',

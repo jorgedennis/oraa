@@ -7,7 +7,7 @@ import {
   TextInput,
 } from 'react-native';
 import { OraaColors, Radii, Shadows } from '@/constants/theme';
-import { PromotionReason, PROMOTION_REASON_COPY, useInsightsStore } from '@/store';
+import { PromotionReason, PROMOTION_REASON_COPY, RESURFACE_COPY, useInsightsStore } from '@/store';
 import { InsightAdviceModal } from './insight-advice-modal';
 
 interface InsightCardProps {
@@ -21,6 +21,9 @@ interface InsightCardProps {
   promotionReason?: PromotionReason;
   confidence?: number;
   evidenceSummary?: string;
+  // Re-surface props (user previously said "No")
+  isResurface?: boolean;
+  noResponseCount?: number;
 }
 
 export function InsightCard({ 
@@ -33,6 +36,8 @@ export function InsightCard({
   promotionReason,
   confidence,
   evidenceSummary,
+  isResurface = false,
+  noResponseCount = 0,
 }: InsightCardProps) {
   const [note, setNote] = useState('');
   const [responded, setResponded] = useState(false);
@@ -52,8 +57,10 @@ export function InsightCard({
     }
   };
   
-  // Get promotion reason copy
-  const promotionCopy = promotionReason ? PROMOTION_REASON_COPY[promotionReason] : null;
+  // Get appropriate copy - re-surface copy takes precedence
+  const promotionCopy = isResurface 
+    ? RESURFACE_COPY 
+    : (promotionReason ? PROMOTION_REASON_COPY[promotionReason] : null);
   
   if (responded) {
     const responseLabels = {
@@ -77,16 +84,25 @@ export function InsightCard({
   return (
     <>
       <TouchableOpacity 
-        style={styles.container}
+        style={[styles.container, isResurface && styles.containerResurface]}
         onPress={handleCardPress}
         activeOpacity={0.8}
       >
         <View style={styles.header}>
           <View style={styles.badgeContainer}>
-            <Text style={styles.badge}>✨ New Insight</Text>
+            <Text style={[styles.badge, isResurface && styles.badgeResurface]}>
+              {isResurface ? '🔄 Another Look' : '✨ New Insight'}
+            </Text>
             {isNovel && (
               <View style={styles.novelBadge}>
                 <Text style={styles.novelBadgeText}>Unique</Text>
+              </View>
+            )}
+            {isResurface && noResponseCount > 0 && (
+              <View style={styles.resurfaceBadge}>
+                <Text style={styles.resurfaceBadgeText}>
+                  {noResponseCount === 1 ? '2nd look' : '3rd look'}
+                </Text>
               </View>
             )}
           </View>
@@ -180,6 +196,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(74,222,128,0.08)',
     borderColor: 'rgba(74,222,128,0.20)',
   },
+  containerResurface: {
+    borderColor: 'rgba(251,146,60,0.35)',
+    backgroundColor: 'rgba(251,146,60,0.04)',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -196,6 +216,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: OraaColors.blue,
   },
+  badgeResurface: {
+    color: 'rgba(251,146,60,0.9)',
+  },
   novelBadge: {
     backgroundColor: 'rgba(147,112,219,0.15)',
     paddingHorizontal: 6,
@@ -206,6 +229,17 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '600',
     color: 'rgba(147,112,219,0.9)',
+  },
+  resurfaceBadge: {
+    backgroundColor: 'rgba(251,146,60,0.15)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: Radii.sm,
+  },
+  resurfaceBadgeText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: 'rgba(251,146,60,0.9)',
   },
   domain: {
     fontSize: 11,

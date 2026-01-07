@@ -204,6 +204,8 @@ export function InsightsScreen() {
                       promotionReason={selfItem.promotion_reason}
                       confidence={selfItem.confidence}
                       evidenceSummary={selfItem.evidence_summary}
+                      isResurface={selfItem.is_resurface}
+                      noResponseCount={selfItem.no_response_count}
                     />
                   );
                 })}
