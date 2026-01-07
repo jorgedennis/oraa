@@ -1,5 +1,5 @@
-import { create } from 'zustand';
 import { chatAPI } from '@/api';
+import { create } from 'zustand';
 import { useAuthStore } from './auth';
 
 export interface Message {
@@ -188,23 +188,23 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       set({ isLoading: true, error: null, conversationId });
       
-      // TODO: Create n8n endpoint to fetch conversation messages
-      // For now, just set the conversation ID and clear messages
-      // When endpoint is ready, fetch messages here:
-      // const response = await fetch(`/webhook/conversations/${conversationId}/messages`);
-      // const data = await response.json();
-      // set({ messages: data.messages });
+      const response = await chatAPI.fetchMessages(conversationId);
       
-      set({ 
-        isLoading: false,
-        conversationId,
-        messages: [] // Clear messages until we load them
-      });
+      if (response.success && response.messages) {
+        set({ 
+          isLoading: false,
+          conversationId,
+          messages: response.messages
+        });
+      } else {
+        throw new Error(response.error || 'Failed to load messages');
+      }
     } catch (error: any) {
       console.error('Load conversation error:', error);
       set({ 
         error: error.message || 'Failed to load conversation',
-        isLoading: false 
+        isLoading: false,
+        messages: []
       });
     }
   },

@@ -1,0 +1,73 @@
+{
+  "name": "4. Conversations - Get Messages",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "conversations/messages",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "id": "webhook-messages",
+      "name": "Webhook",
+      "webhookId": "conversation-messages-webhook-id"
+    },
+    {
+      "parameters": {
+        "jsCode": "const conversationId = $input.first().json.body.conversation_id;\n\nif (!conversationId) {\n  return {\n    json: {\n      success: false,\n      error: 'conversation_id is required'\n    }\n  };\n}\n\nconst supabaseUrl = 'https://ybpsseqzzhttnbpiqaws.supabase.co';\nconst supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlicHNzZXF6emh0dG5icGlxYXdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NzQ3NjUzMywiZXhwIjoyMDgzMDUyNTMzfQ.mqVQjdOswUYHV0b0CNZcd2TZSaIxYkIIrUjZjVv9hTc';\n\ntry {\n  // Fetch messages for this conversation\n  const messages = await this.helpers.httpRequest({\n    method: 'GET',\n    url: `${supabaseUrl}/rest/v1/messages?conversation_id=eq.${conversationId}&order=sequence_number.asc&select=id,content,is_user,created_at,sequence_number`,\n    headers: {\n      'apikey': supabaseKey,\n      'Authorization': `Bearer ${supabaseKey}`\n    },\n    json: true\n  });\n  \n  // Format messages for the app\n  const formattedMessages = messages.map(msg => ({\n    id: msg.id,\n    content: msg.content,\n    is_user: msg.is_user,\n    created_at: msg.created_at\n  }));\n  \n  return {\n    json: {\n      success: true,\n      messages: formattedMessages,\n      conversation_id: conversationId\n    }\n  };\n} catch (error) {\n  return {\n    json: {\n      success: false,\n      error: error.message || 'Failed to fetch messages',\n      messages: []\n    }\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 0],
+      "id": "fetch-messages",
+      "name": "Fetch Messages"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [480, 0],
+      "id": "respond-webhook",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Fetch Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Messages": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "conversation-messages-workflow-v1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
+

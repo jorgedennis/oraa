@@ -1,0 +1,73 @@
+{
+  "name": "3. Conversations - List Conversations",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "conversations",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "id": "webhook-conversations",
+      "name": "Webhook",
+      "webhookId": "conversations-webhook-id"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\nconst userId = body.user_id;\nconst sessionId = body.session_id;\n\nif (!userId && !sessionId) {\n  return {\n    json: {\n      success: false,\n      error: 'user_id or session_id required'\n    }\n  };\n}\n\nconst supabaseUrl = 'https://ybpsseqzzhttnbpiqaws.supabase.co';\nconst supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlicHNzZXF6emh0dG5icGlxYXdzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NzQ3NjUzMywiZXhwIjoyMDgzMDUyNTMzfQ.mqVQjdOswUYHV0b0CNZcd2TZSaIxYkIIrUjZjVv9hTc';\n\ntry {\n  // Build query filter\n  let filter = '';\n  if (userId) {\n    filter = `user_id=eq.${userId}`;\n  } else if (sessionId) {\n    filter = `session_id=eq.${sessionId}`;\n  }\n  \n  // Fetch conversations\n  const conversations = await this.helpers.httpRequest({\n    method: 'GET',\n    url: `${supabaseUrl}/rest/v1/conversations?${filter}&order=started_at.desc`,\n    headers: {\n      'apikey': supabaseKey,\n      'Authorization': `Bearer ${supabaseKey}`\n    },\n    json: true\n  });\n  \n  // For each conversation, get message count and preview\n  const conversationsWithDetails = await Promise.all(\n    conversations.map(async (conv) => {\n      try {\n        // Get first message and all messages in parallel\n        const [firstMessage, allMessages] = await Promise.all([\n          this.helpers.httpRequest({\n            method: 'GET',\n            url: `${supabaseUrl}/rest/v1/messages?conversation_id=eq.${conv.id}&order=sequence_number.asc&limit=1&select=content`,\n            headers: {\n              'apikey': supabaseKey,\n              'Authorization': `Bearer ${supabaseKey}`\n            },\n            json: true\n          }),\n          this.helpers.httpRequest({\n            method: 'GET',\n            url: `${supabaseUrl}/rest/v1/messages?conversation_id=eq.${conv.id}&select=id`,\n            headers: {\n              'apikey': supabaseKey,\n              'Authorization': `Bearer ${supabaseKey}`\n            },\n            json: true\n          })\n        ]);\n        \n        const messageCount = Array.isArray(allMessages) ? allMessages.length : 0;\n        const preview = Array.isArray(firstMessage) && firstMessage.length > 0 \n          ? firstMessage[0].content.substring(0, 60) + (firstMessage[0].content.length > 60 ? '...' : '')\n          : 'New conversation';\n        \n        return {\n          id: conv.id,\n          started_at: conv.started_at,\n          ended_at: conv.ended_at || null,\n          message_count: messageCount,\n          preview: preview\n        };\n      } catch (err) {\n        // If error getting messages, return basic info\n        return {\n          id: conv.id,\n          started_at: conv.started_at,\n          ended_at: conv.ended_at || null,\n          message_count: 0,\n          preview: 'New conversation'\n        };\n      }\n    })\n  );\n  \n  return {\n    json: {\n      success: true,\n      conversations: conversationsWithDetails\n    }\n  };\n} catch (error) {\n  return {\n    json: {\n      success: false,\n      error: error.message || 'Failed to fetch conversations',\n      conversations: []\n    }\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [240, 0],
+      "id": "fetch-conversations",
+      "name": "Fetch Conversations"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [480, 0],
+      "id": "respond-webhook",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Fetch Conversations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Conversations": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "conversations-workflow-v1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
+

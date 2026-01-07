@@ -204,22 +204,7 @@ create index if not exists idx_conversation_threads_conv on public.conversation_
 create index if not exists idx_conversation_threads_thread on public.conversation_threads(thread_id);
 
 -- ============================================================================
--- 9. ENSURE HELPER FUNCTIONS EXIST (needed for RLS policies)
--- ============================================================================
-
--- Recreate get_owned_session_ids if it was dropped (needed for RLS policies)
-create or replace function public.get_owned_session_ids()
-returns setof uuid as $$
-begin
-  return query
-  select id from public.sessions
-  where user_id = auth.uid()
-     or (user_id is null and device_id = current_setting('request.headers', true)::json->>'x-device-id');
-end;
-$$ language plpgsql security definer;
-
--- ============================================================================
--- 10. ENABLE RLS ON NEW TABLES
+-- 9. ENABLE RLS ON NEW TABLES
 -- ============================================================================
 
 alter table public.insight_thread_associations enable row level security;
@@ -229,7 +214,7 @@ alter table public.conversation_threads enable row level security;
 alter table public.thread_insights enable row level security;
 
 -- ============================================================================
--- 11. RLS POLICIES FOR NEW TABLES
+-- 10. RLS POLICIES FOR NEW TABLES
 -- ============================================================================
 
 -- Insight-Thread Associations
@@ -342,7 +327,7 @@ create policy "Users can delete own thread insights"
   );
 
 -- ============================================================================
--- 12. HELPER FUNCTIONS
+-- 11. HELPER FUNCTIONS
 -- ============================================================================
 
 -- Function to get all self insights associated with a thread
@@ -839,7 +824,7 @@ $$ language plpgsql security definer;
 comment on function public.get_map_insights is 'Get all acknowledged self insights organized by domain for the Map view';
 
 -- ============================================================================
--- 13. UPDATE USER CREATION TRIGGER TO USE NEW DOMAINS
+-- 12. UPDATE USER CREATION TRIGGER TO USE NEW DOMAINS
 -- ============================================================================
 
 -- Drop and recreate the trigger function with new domain IDs
@@ -866,4 +851,52 @@ begin
   return new;
 end;
 $$ language plpgsql security definer;
+
+-- Oraa Database Seed Data
+-- Run this after migrations to populate reference data
+
+-- ============================================================================
+-- DOMAINS (The 5 psychological domains for the user's "Map")
+-- Per product spec: Relational, Emotional, Cognitive, Somatic, Behavioral
+-- ============================================================================
+
+insert into public.domains (id, name, icon, display_order) values
+  ('relational', 'Relational', '🤝', 1),
+  ('emotional', 'Emotional', '💙', 2),
+  ('cognitive', 'Cognitive', '🧠', 3),
+  ('somatic', 'Somatic', '🫀', 4),
+  ('behavioral', 'Behavioral', '⚡', 5)
+on conflict (id) do update
+set name = excluded.name,
+    icon = excluded.icon,
+    display_order = excluded.display_order;
+
+-- ============================================================================
+-- DOMAIN DESCRIPTIONS (for reference, stored in app constants)
+-- ============================================================================
+
+-- Relational: Patterns in how you connect with others
+--   - How you relate to people
+--   - Boundaries, attachment styles
+--   - Communication patterns in relationships
+--
+-- Emotional: Patterns in how you experience and process feelings
+--   - Emotional triggers and responses
+--   - How you handle difficult emotions
+--   - Emotional regulation patterns
+--
+-- Cognitive: Patterns in how you think and make decisions
+--   - Thought patterns and loops
+--   - Decision-making tendencies
+--   - Beliefs and assumptions
+--
+-- Somatic: Patterns in how emotions manifest physically
+--   - Body sensations and emotions
+--   - Physical stress responses
+--   - Mind-body connection
+--
+-- Behavioral: Patterns in what you do under certain conditions
+--   - Habitual responses
+--   - Coping mechanisms
+--   - Action tendencies
 

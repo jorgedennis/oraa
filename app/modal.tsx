@@ -1,14 +1,26 @@
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
 import { OraaColors, Radii, Shadows } from '@/constants/theme';
 import { useAuthStore } from '@/store';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function AuthModal() {
   const router = useRouter();
   const { signup, login, isLoading } = useAuthStore();
+  const { mode: modeParam } = useLocalSearchParams<{ mode?: string }>();
   
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [mode, setMode] = useState<'login' | 'signup'>(
+    modeParam === 'signup' ? 'signup' : 'login'
+  );
+  
+  // Update mode if query param changes
+  useEffect(() => {
+    if (modeParam === 'signup') {
+      setMode('signup');
+    } else if (modeParam === 'login') {
+      setMode('login');
+    }
+  }, [modeParam]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

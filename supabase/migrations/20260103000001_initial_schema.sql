@@ -1,9 +1,17 @@
 -- Oraa Database Schema
 -- Migration: Initial Schema
 -- Created: 2026-01-03
+--
+-- ⚠️ WARNING: This migration uses DROP TABLE statements.
+-- This is ONLY safe for fresh/empty databases.
+-- DO NOT run this on a database with existing user data!
+-- 
+-- If you need to modify existing tables, use ALTER TABLE instead.
+-- See MIGRATION_GUIDELINES.md for safe migration practices.
 
 -- ============================================================================
 -- DROP EXISTING TABLES (in reverse dependency order)
+-- ⚠️ DANGEROUS: Only use for initial setup on empty database
 -- ============================================================================
 
 drop table if exists public.user_daily_usage cascade;

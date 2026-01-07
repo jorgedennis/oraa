@@ -1,22 +1,20 @@
+import { OraaLogo } from '@/components/oraa-logo';
+import { TopicCloud } from '@/components/topic-cloud';
+import { Button } from '@/components/ui/button';
+import { FAQItem } from '@/components/ui/faq-item';
+import { Pill } from '@/components/ui/pill';
+import { OraaColors } from '@/constants/theme';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withDelay,
-  withSequence,
   Easing,
-  runOnJS,
   interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { OraaLogo } from '@/components/oraa-logo';
-import { Button } from '@/components/ui/button';
-import { Pill } from '@/components/ui/pill';
-import { FAQItem } from '@/components/ui/faq-item';
-import { TopicCloud } from '@/components/topic-cloud';
-import { OraaColors } from '@/constants/theme';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -61,6 +59,7 @@ const CONTENT_DURATION = 500;
 interface LandingScreenProps {
   onContinueAnonymously?: () => void;
   onCreateAccount?: () => void;
+  onLogin?: () => void;
 }
 
 // Typewriter text component
@@ -102,6 +101,7 @@ function TypewriterText({ text, startDelay, style }: { text: string; startDelay:
 export function LandingScreen({
   onContinueAnonymously,
   onCreateAccount,
+  onLogin,
 }: LandingScreenProps) {
   const insets = useSafeAreaInsets();
   const [introComplete, setIntroComplete] = useState(false);
@@ -273,11 +273,20 @@ export function LandingScreen({
           variant="primary"
           onPress={onContinueAnonymously}
         />
-        <Button
-          title="Create account"
-          variant="secondary"
-          onPress={onCreateAccount}
-        />
+        <View style={styles.authButtons}>
+          <Button
+            title="Login"
+            variant="secondary"
+            onPress={onLogin}
+            style={styles.authButton}
+          />
+          <Button
+            title="Create account"
+            variant="secondary"
+            onPress={onCreateAccount}
+            style={styles.authButton}
+          />
+        </View>
         <Text style={styles.footer}>
           Private by default. You can save later if you want.
         </Text>
@@ -369,6 +378,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: OraaColors.stroke,
     backgroundColor: OraaColors.bg,
+  },
+  authButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  authButton: {
+    flex: 1,
   },
   footer: {
     marginTop: 4,

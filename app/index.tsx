@@ -1,7 +1,7 @@
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
 import { LandingScreen } from '@/components/screens/landing-screen';
 import { useAuthStore } from '@/store';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -13,17 +13,17 @@ export default function LandingPage() {
     setIsMounted(true);
   }, []);
   
-  // Only auto-navigate if user is REGISTERED (not anonymous)
-  // Anonymous users should always see landing page first
-  useEffect(() => {
-    if (isMounted && isAuthenticated && !isLoading && !isAnonymous && userId) {
-      // Small delay to ensure router is ready
-      const timer = setTimeout(() => {
-        router.replace('/(drawer)/chat');
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [isMounted, isAuthenticated, isLoading, isAnonymous, userId, router]);
+  // Disabled auto-navigation - let users choose to go to chat
+  // This allows testing the landing page flow
+  // useEffect(() => {
+  //   if (isMounted && isAuthenticated && !isLoading && !isAnonymous && userId) {
+  //     // Small delay to ensure router is ready
+  //     const timer = setTimeout(() => {
+  //       router.replace('/(drawer)/chat');
+  //     }, 100);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [isMounted, isAuthenticated, isLoading, isAnonymous, userId, router]);
   
   const handleContinueAnonymously = async () => {
     try {
@@ -35,7 +35,11 @@ export default function LandingPage() {
   };
   
   const handleCreateAccount = () => {
-    router.push('/modal');
+    router.push('/modal?mode=signup');
+  };
+  
+  const handleLogin = () => {
+    router.push('/modal?mode=login');
   };
   
   // Show landing screen while loading or not mounted
@@ -44,6 +48,7 @@ export default function LandingPage() {
     <LandingScreen
       onContinueAnonymously={handleContinueAnonymously}
       onCreateAccount={handleCreateAccount}
+      onLogin={handleLogin}
     />
   );
 }

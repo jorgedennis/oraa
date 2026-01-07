@@ -1,9 +1,6 @@
 # Supabase Configuration for Oraa
 # https://supabase.com/docs/guides/cli/config
 
-[project]
-id = "oraa"
-
 [api]
 # Port to use for the API URL
 port = 54321
@@ -18,7 +15,7 @@ max_rows = 1000
 # Port to use for the local database URL
 port = 54322
 # The database major version to use
-major_version = 15
+major_version = 17
 
 [studio]
 # Port to use for Supabase Studio

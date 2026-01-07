@@ -22,6 +22,13 @@ export interface UsageStatus {
   resets_at?: string;
 }
 
+export interface Message {
+  id: string;
+  content: string;
+  is_user: boolean;
+  created_at: string;
+}
+
 export interface ChatResponse {
   success: boolean;
   message: string;
@@ -247,6 +254,32 @@ export const chatAPI = {
       return data;
     } catch (error) {
       console.error('Send message error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Fetch messages for a conversation
+   */
+  async fetchMessages(conversationId: string): Promise<{
+    success: boolean;
+    messages?: Message[];
+    error?: string;
+  }> {
+    try {
+      const response = await fetch(`${API_URL}/conversations/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: conversationId })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Fetch messages error:', error);
       throw error;
     }
   }
