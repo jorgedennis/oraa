@@ -160,6 +160,60 @@ const ROMANCE_SUBDOMAIN_SLUG_MAP = {
   'stages_transitions': 'stages_transitions',
 };
 
+// Map JSON category names to spec subdomain names
+// Handles cases where JSON has "Self-Worth Beliefs" but spec has "Self-Worth"
+function mapCategoryToSubdomain(jsonCategory, domainId) {
+  const subdomains = CORE_SUBDOMAINS[domainId] || [];
+  
+  // First try exact match
+  if (subdomains.includes(jsonCategory)) {
+    return jsonCategory;
+  }
+  
+  // Try removing common suffixes
+  const suffixes = [' Beliefs', ' Attribution', ' Perception', ' Patterns', ' Strategies', ' Expectations'];
+  for (const suffix of suffixes) {
+    if (jsonCategory.endsWith(suffix)) {
+      const baseName = jsonCategory.slice(0, -suffix.length);
+      if (subdomains.includes(baseName)) {
+        return baseName;
+      }
+    }
+  }
+  
+  // Special mappings for known mismatches
+  const specialMappings = {
+    'Trust & Expectation Beliefs': 'Trust & Expectations',
+    'Standards & Expectation Beliefs': 'Standards & Excellence',
+  };
+  if (specialMappings[jsonCategory]) {
+    if (subdomains.includes(specialMappings[jsonCategory])) {
+      return specialMappings[jsonCategory];
+    }
+  }
+  
+  // Try fuzzy match (contains) - normalize by removing "&" variations
+  const normalize = (str) => str.toLowerCase().replace(/\s*&\s*/g, '&').replace(/\s+/g, ' ').trim();
+  const normalizedJson = normalize(jsonCategory);
+  
+  for (const subdomain of subdomains) {
+    const normalizedSubdomain = normalize(subdomain);
+    // Check if JSON category contains subdomain (or vice versa) after normalization
+    if (normalizedJson.includes(normalizedSubdomain) || normalizedSubdomain.includes(normalizedJson)) {
+      return subdomain;
+    }
+    // Also try matching first part before "&" or "Beliefs"
+    const jsonFirstPart = normalizedJson.split('&')[0].split('beliefs')[0].trim();
+    const subdomainFirstPart = normalizedSubdomain.split('&')[0].trim();
+    if (jsonFirstPart === subdomainFirstPart && jsonFirstPart.length > 3) {
+      return subdomain;
+    }
+  }
+  
+  // Return null if no match found
+  return null;
+}
+
 async function main() {
   console.log('🌱 Starting template seed process...\n');
 
@@ -295,10 +349,18 @@ async function main() {
 
   for (const template of data.templates) {
     try {
+      // Map JSON category to spec subdomain name
+      const mappedCategory = mapCategoryToSubdomain(template.category, template.domain);
+      if (!mappedCategory) {
+        console.error(`❌ Could not map category "${template.category}" to subdomain for template ${template.slug}`);
+        errors++;
+        continue;
+      }
+      
       // Get category_id
-      const categoryId = categoryMap[template.category];
+      const categoryId = categoryMap[mappedCategory];
       if (!categoryId) {
-        console.error(`❌ Category "${template.category}" not found for template ${template.slug}`);
+        console.error(`❌ Category "${mappedCategory}" (mapped from "${template.category}") not found for template ${template.slug}`);
         errors++;
         continue;
       }
