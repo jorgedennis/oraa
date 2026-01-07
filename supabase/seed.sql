@@ -2,16 +2,17 @@
 -- Run this after migrations to populate reference data
 
 -- ============================================================================
--- DOMAINS (The 5 psychological domains for the user's "Map")
--- Per product spec: Relational, Emotional, Cognitive, Somatic, Behavioral
+-- DOMAINS (The 6 core psychological domains for the user's "Map")
+-- Per Insights Library Structure v3.0: Mechanism-based organization
 -- ============================================================================
 
 insert into public.domains (id, name, icon, display_order) values
-  ('relational', 'Relational', '🤝', 1),
-  ('emotional', 'Emotional', '💙', 2),
-  ('cognitive', 'Cognitive', '🧠', 3),
-  ('somatic', 'Somatic', '🫀', 4),
-  ('behavioral', 'Behavioral', '⚡', 5)
+  ('beliefs_assumptions', 'Beliefs & Assumptions', '🧭', 1),
+  ('emotional_processing', 'Emotional Processing', '💙', 2),
+  ('coping_strategies', 'Coping Strategies', '🛡️', 3),
+  ('relational_strategies', 'Relational Strategies', '🤝', 4),
+  ('somatic_regulation', 'Somatic Regulation', '🫀', 5),
+  ('agency_follow_through', 'Agency & Follow-Through', '⚡', 6)
 on conflict (id) do update
 set name = excluded.name,
     icon = excluded.icon,
@@ -21,28 +22,30 @@ set name = excluded.name,
 -- DOMAIN DESCRIPTIONS (for reference, stored in app constants)
 -- ============================================================================
 
--- Relational: Patterns in how you connect with others
---   - How you relate to people
---   - Boundaries, attachment styles
---   - Communication patterns in relationships
+-- Beliefs & Assumptions: The fundamental beliefs you hold about yourself, others, and the world
+--   - Self-worth, responsibility, safety & threat
+--   - Trust & expectations, control & certainty
+--   - Fairness & justice, standards & excellence
 --
--- Emotional: Patterns in how you experience and process feelings
---   - Emotional triggers and responses
---   - How you handle difficult emotions
---   - Emotional regulation patterns
+-- Emotional Processing: How emotions are experienced, expressed, avoided, or regulated
+--   - Awareness, intensity, expression
+--   - Anxiety & threat response, recovery
 --
--- Cognitive: Patterns in how you think and make decisions
---   - Thought patterns and loops
---   - Decision-making tendencies
---   - Beliefs and assumptions
+-- Coping Strategies: Actions taken to regulate discomfort or change internal state
+--   - Approach vs avoidance, control & structure
+--   - Distraction & relief, standards & self-regulation
+--   - Reassurance & external support
 --
--- Somatic: Patterns in how emotions manifest physically
---   - Body sensations and emotions
---   - Physical stress responses
---   - Mind-body connection
+-- Relational Strategies: Observable interpersonal moves in relational contexts
+--   - Conflict navigation, closeness regulation, boundary management
+--   - Trust development, caretaking patterns, communication patterns
+--   - Repair & recovery, validation & approval
 --
--- Behavioral: Patterns in what you do under certain conditions
---   - Habitual responses
---   - Coping mechanisms
---   - Action tendencies
+-- Somatic Regulation: Body states and signals that arise automatically
+--   - Arousal, tension, energy
+--   - Shutdown, sensory load
+--
+-- Agency & Follow-Through: How you engage with choice and action
+--   - Decision-making, initiation, motivation
+--   - Self-trust, follow-through, external structure
 

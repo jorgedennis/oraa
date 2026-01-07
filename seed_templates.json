@@ -1,0 +1,2564 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "created": "2025-01-07",
+    "total_templates": 75,
+    "domains": [
+      {
+        "id": "relational_strategies",
+        "name": "Relational Strategies",
+        "template_count": 40,
+        "categories": 8
+      },
+      {
+        "id": "beliefs_assumptions",
+        "name": "Beliefs & Assumptions",
+        "template_count": 35,
+        "categories": 7
+      }
+    ]
+  },
+  "templates": [
+    {
+      "slug": "conflict_smooths_over_tension",
+      "insight_text": "You smooth over tension instead of naming it directly",
+      "domain": "relational_strategies",
+      "category": "Conflict Navigation",
+      "subcategory": "Smoothing",
+      "subtype": "pattern",
+      "search_variants": [
+        "keeps peace",
+        "avoids confrontation",
+        "glosses over disagreement",
+        "minimizes conflict",
+        "de-escalates automatically",
+        "changes subject when tense",
+        "makes light of serious moments",
+        "peacekeeping behavior",
+        "conflict avoider",
+        "smooths things over"
+      ],
+      "search_keywords": [
+        "conflict",
+        "tension",
+        "smooth",
+        "peace",
+        "avoid",
+        "confrontation"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "conflict_repair_romance",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "conflict_shuts_down_withdraws",
+      "insight_text": "When conflict gets intense, you go quiet and withdraw",
+      "domain": "relational_strategies",
+      "category": "Conflict Navigation",
+      "subcategory": "Withdrawal",
+      "subtype": "pattern",
+      "search_variants": [
+        "goes silent during arguments",
+        "withdraws when fighting",
+        "shuts down in conflict",
+        "stops talking when upset",
+        "walks away from arguments",
+        "stonewalling behavior",
+        "emotional withdrawal",
+        "silent treatment pattern",
+        "disappears during fights",
+        "stops engaging when heated"
+      ],
+      "search_keywords": [
+        "conflict",
+        "withdraw",
+        "silent",
+        "shutdown",
+        "quiet",
+        "stonewall"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "conflict_repair_romance",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "conflict_preemptive_resolution",
+      "insight_text": "You try to resolve tension before it fully surfaces",
+      "domain": "relational_strategies",
+      "category": "Conflict Navigation",
+      "subcategory": "Preemption",
+      "subtype": "pattern",
+      "search_variants": [
+        "fixes problems early",
+        "addresses tension immediately",
+        "can't sit with unresolved conflict",
+        "rushes to resolution",
+        "solves before discussing",
+        "preemptive peacemaking",
+        "jumps to fix",
+        "resolves quickly",
+        "can't tolerate tension",
+        "needs immediate resolution"
+      ],
+      "search_keywords": [
+        "conflict",
+        "resolve",
+        "fix",
+        "tension",
+        "preemptive",
+        "quickly"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "conflict_repair_romance",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "conflict_defensive_counterattack",
+      "insight_text": "When criticized, you immediately point to the other person's faults",
+      "domain": "relational_strategies",
+      "category": "Conflict Navigation",
+      "subcategory": "Defense",
+      "subtype": "pattern",
+      "search_variants": [
+        "deflects criticism",
+        "counterattacks when blamed",
+        "points out others' mistakes",
+        "turns criticism around",
+        "defensive in arguments",
+        "blames back",
+        "can't hear feedback",
+        "attack when attacked",
+        "reciprocal blame",
+        "shifts focus to others"
+      ],
+      "search_keywords": [
+        "defensive",
+        "criticism",
+        "blame",
+        "counterattack",
+        "deflect"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "conflict_repair_romance",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "conflict_delayed_processing",
+      "insight_text": "You stay calm during conflict, then process it intensely afterward",
+      "domain": "relational_strategies",
+      "category": "Conflict Navigation",
+      "subcategory": "Delayed Response",
+      "subtype": "pattern",
+      "search_variants": [
+        "calm in the moment, upset later",
+        "processes conflict after it ends",
+        "delayed emotional reaction",
+        "thinks of responses later",
+        "staircase wit in conflict",
+        "composed during, churning after",
+        "slow-burn conflict response",
+        "ruminates after arguments",
+        "late-processing pattern",
+        "calm facade then overthinking"
+      ],
+      "search_keywords": [
+        "conflict",
+        "delayed",
+        "later",
+        "afterward",
+        "process",
+        "calm"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "conflict_repair_romance",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "closeness_creates_distance_intensity",
+      "insight_text": "You create distance when relationships start feeling too intense",
+      "domain": "relational_strategies",
+      "category": "Closeness Regulation",
+      "subcategory": "Distance Creation",
+      "subtype": "pattern",
+      "search_variants": [
+        "pulls back when close",
+        "needs space when intimate",
+        "withdraws after connection",
+        "creates distance in relationships",
+        "backs away from intensity",
+        "avoidant when close",
+        "intimate then distant",
+        "closeness triggers withdrawal",
+        "fear of engulfment",
+        "needs breathing room"
+      ],
+      "search_keywords": [
+        "closeness",
+        "distance",
+        "intimate",
+        "withdraw",
+        "space",
+        "intensity"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "closeness_shares_fast_pulls_back",
+      "insight_text": "You share deeply early, then pull back once real intimacy develops",
+      "domain": "relational_strategies",
+      "category": "Closeness Regulation",
+      "subcategory": "Premature Intimacy",
+      "subtype": "pattern",
+      "search_variants": [
+        "overshares early",
+        "fast intimacy then retreat",
+        "opens up quickly then closes",
+        "vulnerable too soon",
+        "shares then regrets",
+        "premature disclosure",
+        "intense start then distance",
+        "trauma dumps early",
+        "emotional availability shifts",
+        "hot then cold pattern"
+      ],
+      "search_keywords": [
+        "share",
+        "early",
+        "quickly",
+        "pull back",
+        "retreat",
+        "vulnerable"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "closeness_tests_commitment",
+      "insight_text": "You test whether people will stay before fully trusting them",
+      "domain": "relational_strategies",
+      "category": "Closeness Regulation",
+      "subcategory": "Testing",
+      "subtype": "pattern",
+      "search_variants": [
+        "tests relationships",
+        "creates conflict to see if they leave",
+        "pushes people away to test",
+        "checks commitment",
+        "needs proof of staying",
+        "testing loyalty",
+        "relationship tests",
+        "push-pull dynamic",
+        "proves they'll leave",
+        "creates drama to test"
+      ],
+      "search_keywords": [
+        "test",
+        "commitment",
+        "prove",
+        "stay",
+        "loyalty",
+        "push"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "closeness_needs_space_to_reset",
+      "insight_text": "You need regular space to feel like yourself in relationships",
+      "domain": "relational_strategies",
+      "category": "Closeness Regulation",
+      "subcategory": "Space Needs",
+      "subtype": "pattern",
+      "search_variants": [
+        "needs alone time",
+        "recharges solo",
+        "feels smothered without space",
+        "loses self in relationships",
+        "requires separation",
+        "autonomy needs",
+        "independent recharge",
+        "space to breathe",
+        "needs distance to reset",
+        "togetherness overwhelms"
+      ],
+      "search_keywords": [
+        "space",
+        "alone",
+        "autonomy",
+        "reset",
+        "recharge",
+        "independent"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "closeness_reveals_slowly",
+      "insight_text": "You reveal yourself gradually, keeping most things private initially",
+      "domain": "relational_strategies",
+      "category": "Closeness Regulation",
+      "subcategory": "Gradual Disclosure",
+      "subtype": "pattern",
+      "search_variants": [
+        "slow to open up",
+        "guards privacy",
+        "reveals in layers",
+        "takes time to trust",
+        "private person",
+        "gradual vulnerability",
+        "protective of self",
+        "slow disclosure",
+        "earns trust over time",
+        "keeps walls up initially"
+      ],
+      "search_keywords": [
+        "reveal",
+        "slowly",
+        "gradual",
+        "private",
+        "guarded",
+        "layers"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "boundary_accommodates_at_cost",
+      "insight_text": "You accommodate others even when it costs you significantly",
+      "domain": "relational_strategies",
+      "category": "Boundary Management",
+      "subcategory": "Over-accommodation",
+      "subtype": "pattern",
+      "search_variants": [
+        "puts others first",
+        "sacrifices own needs",
+        "accommodates everyone",
+        "people pleaser",
+        "overextends for others",
+        "self-sacrifice pattern",
+        "ignores own limits",
+        "gives too much",
+        "accommodates at expense",
+        "prioritizes others always"
+      ],
+      "search_keywords": [
+        "accommodate",
+        "sacrifice",
+        "others first",
+        "people please",
+        "cost"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "roles_labor_power",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "boundary_says_yes_resents_later",
+      "insight_text": "You say yes in the moment, then feel trapped later",
+      "domain": "relational_strategies",
+      "category": "Boundary Management",
+      "subcategory": "Resentful Agreement",
+      "subtype": "pattern",
+      "search_variants": [
+        "agrees then regrets",
+        "says yes but means no",
+        "commits then resents",
+        "automatic yes",
+        "can't say no in moment",
+        "agreeable facade",
+        "yes then trapped feeling",
+        "overcommits unintentionally",
+        "regrets saying yes",
+        "resentment after agreeing"
+      ],
+      "search_keywords": [
+        "yes",
+        "agree",
+        "resent",
+        "trapped",
+        "regret",
+        "commit"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "roles_labor_power",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "boundary_rigid_walls",
+      "insight_text": "Your boundaries are protective walls rather than flexible filters",
+      "domain": "relational_strategies",
+      "category": "Boundary Management",
+      "subcategory": "Rigidity",
+      "subtype": "pattern",
+      "search_variants": [
+        "rigid boundaries",
+        "all or nothing boundaries",
+        "walls not boundaries",
+        "inflexible limits",
+        "protective barriers",
+        "guards against everyone",
+        "no middle ground",
+        "extreme protection",
+        "fortress boundaries",
+        "keeps everyone out"
+      ],
+      "search_keywords": [
+        "rigid",
+        "walls",
+        "inflexible",
+        "protective",
+        "barriers",
+        "extreme"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "boundary_needs_stay_invisible",
+      "insight_text": "You keep your needs quiet to avoid burdening others",
+      "domain": "relational_strategies",
+      "category": "Boundary Management",
+      "subcategory": "Need Suppression",
+      "subtype": "pattern",
+      "search_variants": [
+        "hides needs",
+        "doesn't want to burden",
+        "keeps needs private",
+        "minimizes own needs",
+        "self-sufficient facade",
+        "doesn't ask for help",
+        "invisible needs",
+        "burden avoidance",
+        "keeps requirements small",
+        "handles things alone"
+      ],
+      "search_keywords": [
+        "needs",
+        "quiet",
+        "burden",
+        "hide",
+        "suppress",
+        "invisible"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "communication_vulnerability",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "boundary_guilt_when_setting",
+      "insight_text": "Setting boundaries triggers guilt, even when they're reasonable",
+      "domain": "relational_strategies",
+      "category": "Boundary Management",
+      "subcategory": "Guilt Response",
+      "subtype": "pattern",
+      "search_variants": [
+        "feels guilty saying no",
+        "boundaries feel selfish",
+        "guilt after setting limits",
+        "bad for having needs",
+        "apologizes for boundaries",
+        "guilt about self-care",
+        "feels mean setting limits",
+        "boundary guilt",
+        "selfish feeling for needs",
+        "apologizes for saying no"
+      ],
+      "search_keywords": [
+        "boundary",
+        "guilt",
+        "selfish",
+        "apologize",
+        "limits",
+        "no"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "communication_vulnerability",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "trust_needs_proof_first",
+      "insight_text": "You look for concrete proof someone is trustworthy before opening up",
+      "domain": "relational_strategies",
+      "category": "Trust Development",
+      "subcategory": "Proof-Seeking",
+      "subtype": "pattern",
+      "search_variants": [
+        "needs evidence to trust",
+        "waits for proof",
+        "tests before trusting",
+        "trust must be earned",
+        "skeptical initially",
+        "requires track record",
+        "prove yourself first",
+        "earned trust only",
+        "watches for consistency",
+        "slow to trust"
+      ],
+      "search_keywords": [
+        "trust",
+        "proof",
+        "evidence",
+        "earn",
+        "test",
+        "skeptical"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "trust_expects_eventual_hurt",
+      "insight_text": "You expect closeness to eventually lead to disappointment",
+      "domain": "relational_strategies",
+      "category": "Trust Development",
+      "subcategory": "Disappointment Expectation",
+      "subtype": "pattern",
+      "search_variants": [
+        "waits for the other shoe to drop",
+        "expects betrayal",
+        "anticipates disappointment",
+        "prepares for hurt",
+        "assumes eventual abandonment",
+        "waiting to be let down",
+        "guards against future pain",
+        "expects people to leave",
+        "braces for disappointment",
+        "protective pessimism"
+      ],
+      "search_keywords": [
+        "expect",
+        "disappointment",
+        "hurt",
+        "betrayal",
+        "leave",
+        "eventual"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "trust_tests_before_relying",
+      "insight_text": "You test whether people follow through before depending on them",
+      "domain": "relational_strategies",
+      "category": "Trust Development",
+      "subcategory": "Reliability Testing",
+      "subtype": "pattern",
+      "search_variants": [
+        "checks reliability",
+        "tests follow-through",
+        "needs consistency proof",
+        "asks small things first",
+        "escalates requests gradually",
+        "watches for flaking",
+        "dependency tests",
+        "reliability checking",
+        "trust but verify",
+        "needs demonstration"
+      ],
+      "search_keywords": [
+        "test",
+        "rely",
+        "follow through",
+        "consistency",
+        "check",
+        "depend"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "trust_gives_quickly_questions_later",
+      "insight_text": "You trust quickly, then question whether you should have",
+      "domain": "relational_strategies",
+      "category": "Trust Development",
+      "subcategory": "Premature Trust",
+      "subtype": "pattern",
+      "search_variants": [
+        "trusts too fast",
+        "opens up quickly then doubts",
+        "immediate trust then regret",
+        "gives benefit of doubt",
+        "assumes best intentions",
+        "overly trusting initially",
+        "questions trust later",
+        "second-guesses openness",
+        "fast trust then worry",
+        "naive trust pattern"
+      ],
+      "search_keywords": [
+        "trust",
+        "quickly",
+        "fast",
+        "question",
+        "doubt",
+        "regret"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "trust_withholds_full_story",
+      "insight_text": "You share most things but keep certain parts protected",
+      "domain": "relational_strategies",
+      "category": "Trust Development",
+      "subcategory": "Selective Disclosure",
+      "subtype": "pattern",
+      "search_variants": [
+        "partial disclosure",
+        "keeps some things private",
+        "selective sharing",
+        "holds back key details",
+        "protects certain topics",
+        "shares most but not all",
+        "guarded about some things",
+        "edited version of self",
+        "compartmentalized sharing",
+        "strategic withholding"
+      ],
+      "search_keywords": [
+        "withhold",
+        "partial",
+        "selective",
+        "protect",
+        "private",
+        "certain"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "communication_vulnerability",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "caretaking_monitors_others_mood",
+      "insight_text": "You track other people's emotional states and adjust your behavior accordingly",
+      "domain": "relational_strategies",
+      "category": "Caretaking Patterns",
+      "subcategory": "Mood Monitoring",
+      "subtype": "pattern",
+      "search_variants": [
+        "reads the room constantly",
+        "tracks others' feelings",
+        "monitors emotional temperature",
+        "adjusts to others' moods",
+        "emotional radar",
+        "hyperaware of others",
+        "scans for upset",
+        "mood detector",
+        "shifts based on others",
+        "emotional surveillance"
+      ],
+      "search_keywords": [
+        "monitor",
+        "track",
+        "mood",
+        "adjust",
+        "emotional",
+        "others"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "roles_labor_power",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "caretaking_fixes_for_comfort",
+      "insight_text": "You try to fix problems to restore other people's comfort",
+      "domain": "relational_strategies",
+      "category": "Caretaking Patterns",
+      "subcategory": "Problem-Fixing",
+      "subtype": "pattern",
+      "search_variants": [
+        "fixes others' problems",
+        "takes responsibility for comfort",
+        "solves to calm others",
+        "makes things better for people",
+        "rescuer role",
+        "fixes emotional distress",
+        "problem-solver for others",
+        "restores peace actively",
+        "manages others' experience",
+        "takes on others' problems"
+      ],
+      "search_keywords": [
+        "fix",
+        "comfort",
+        "solve",
+        "restore",
+        "others",
+        "problems"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "roles_labor_power",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "caretaking_prioritizes_others_needs",
+      "insight_text": "You put other people's needs ahead of your own consistently",
+      "domain": "relational_strategies",
+      "category": "Caretaking Patterns",
+      "subcategory": "Priority Inversion",
+      "subtype": "pattern",
+      "search_variants": [
+        "others first always",
+        "neglects own needs",
+        "self comes last",
+        "gives more than receives",
+        "forgets own priorities",
+        "takes care of everyone",
+        "others matter more",
+        "self-sacrifice default",
+        "needs hierarchy inverted",
+        "everyone before self"
+      ],
+      "search_keywords": [
+        "prioritize",
+        "others",
+        "needs",
+        "first",
+        "ahead",
+        "sacrifice"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "roles_labor_power",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "caretaking_manages_own_reactions",
+      "insight_text": "You manage your responses to avoid upsetting others",
+      "domain": "relational_strategies",
+      "category": "Caretaking Patterns",
+      "subcategory": "Self-Management",
+      "subtype": "pattern",
+      "search_variants": [
+        "controls reactions carefully",
+        "edits emotional responses",
+        "filters to protect others",
+        "modulates affect",
+        "manages presentation",
+        "avoids disrupting others",
+        "keeps reactions small",
+        "doesn't show upset",
+        "protects others from feelings",
+        "careful emotional display"
+      ],
+      "search_keywords": [
+        "manage",
+        "reactions",
+        "avoid",
+        "upset",
+        "control",
+        "filter"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "roles_labor_power",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "caretaking_rescues_from_consequences",
+      "insight_text": "You take on responsibility for problems that aren't yours to solve",
+      "domain": "relational_strategies",
+      "category": "Caretaking Patterns",
+      "subcategory": "Responsibility Taking",
+      "subtype": "pattern",
+      "search_variants": [
+        "rescues others",
+        "takes on others' problems",
+        "solves for everyone",
+        "owns others' mistakes",
+        "shields from consequences",
+        "over-responsible for others",
+        "carries others' weight",
+        "prevents others' failure",
+        "enabling pattern",
+        "saves people from themselves"
+      ],
+      "search_keywords": [
+        "rescue",
+        "responsibility",
+        "others",
+        "solve",
+        "take on",
+        "problems"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "roles_labor_power",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "communication_hints_not_asks",
+      "insight_text": "You hint at what you need rather than asking directly",
+      "domain": "relational_strategies",
+      "category": "Communication Patterns",
+      "subcategory": "Indirect Expression",
+      "subtype": "pattern",
+      "search_variants": [
+        "indirect communication",
+        "hints instead of asks",
+        "suggests rather than requests",
+        "expects reading between lines",
+        "subtle requests",
+        "implicit needs",
+        "doesn't ask directly",
+        "passive requests",
+        "roundabout communication",
+        "avoids direct asks"
+      ],
+      "search_keywords": [
+        "hint",
+        "indirect",
+        "suggest",
+        "ask",
+        "direct",
+        "imply"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "communication_vulnerability",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "communication_assumes_should_know",
+      "insight_text": "You expect people to understand what you need without saying it",
+      "domain": "relational_strategies",
+      "category": "Communication Patterns",
+      "subcategory": "Expectation of Mind-Reading",
+      "subtype": "pattern",
+      "search_variants": [
+        "expects mind reading",
+        "they should just know",
+        "shouldn't have to say",
+        "obvious needs unspoken",
+        "frustrated when missed",
+        "implicit expectations",
+        "should be obvious",
+        "hurt when not noticed",
+        "assumes awareness",
+        "expects intuition"
+      ],
+      "search_keywords": [
+        "expect",
+        "should know",
+        "obvious",
+        "without saying",
+        "mind read"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "communication_vulnerability",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "communication_explains_over_feels",
+      "insight_text": "You explain the situation clearly but your feelings stay less accessible",
+      "domain": "relational_strategies",
+      "category": "Communication Patterns",
+      "subcategory": "Intellectualized Communication",
+      "subtype": "pattern",
+      "search_variants": [
+        "explains not feels",
+        "rational communication",
+        "describes events not emotions",
+        "intellectual processing",
+        "talks around feelings",
+        "analytical sharing",
+        "avoids emotional language",
+        "explains instead of expresses",
+        "head not heart communication",
+        "factual not feeling"
+      ],
+      "search_keywords": [
+        "explain",
+        "feelings",
+        "rational",
+        "intellectual",
+        "analyze",
+        "describe"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "communication_vulnerability",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "communication_softens_truth",
+      "insight_text": "You round the edges off hard truths to make them easier to hear",
+      "domain": "relational_strategies",
+      "category": "Communication Patterns",
+      "subcategory": "Truth Softening",
+      "subtype": "pattern",
+      "search_variants": [
+        "softens bad news",
+        "cushions hard truths",
+        "dilutes directness",
+        "makes palatable",
+        "protective communication",
+        "buffers harsh reality",
+        "gentle delivery",
+        "avoids bluntness",
+        "edges rounded",
+        "diplomatic framing"
+      ],
+      "search_keywords": [
+        "soften",
+        "truth",
+        "cushion",
+        "dilute",
+        "gentle",
+        "round edges"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "communication_vulnerability",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "communication_delayed_expression",
+      "insight_text": "You process conversations internally first, responding later rather than in the moment",
+      "domain": "relational_strategies",
+      "category": "Communication Patterns",
+      "subcategory": "Processing Delay",
+      "subtype": "pattern",
+      "search_variants": [
+        "delayed responses",
+        "thinks before responding",
+        "processes then replies",
+        "slow verbal processing",
+        "needs time to formulate",
+        "internal processing first",
+        "responds hours later",
+        "text responses delayed",
+        "needs processing time",
+        "thinks of response later"
+      ],
+      "search_keywords": [
+        "delayed",
+        "later",
+        "process",
+        "respond",
+        "time",
+        "formulate"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "communication_vulnerability",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "repair_needs_space_before_reconnect",
+      "insight_text": "You need time alone before you can repair after conflict",
+      "domain": "relational_strategies",
+      "category": "Repair & Recovery",
+      "subcategory": "Space-First",
+      "subtype": "pattern",
+      "search_variants": [
+        "processes conflict alone",
+        "needs distance to repair",
+        "space before reconnection",
+        "time alone to reset",
+        "can't repair immediately",
+        "withdrawal to process",
+        "cooling off period needed",
+        "repairs after space",
+        "distance before closeness",
+        "time to settle first"
+      ],
+      "search_keywords": [
+        "repair",
+        "space",
+        "alone",
+        "time",
+        "before",
+        "distance"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "conflict_repair_romance",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "repair_over_apologizes",
+      "insight_text": "You apologize more than necessary to restore connection quickly",
+      "domain": "relational_strategies",
+      "category": "Repair & Recovery",
+      "subcategory": "Excessive Apology",
+      "subtype": "pattern",
+      "search_variants": [
+        "apologizes excessively",
+        "takes all blame",
+        "over-apologizes",
+        "rushes to sorry",
+        "accepts fault to reconnect",
+        "apologizes for everything",
+        "quick apologies",
+        "assumes responsibility fully",
+        "sorry as default",
+        "repair through apology"
+      ],
+      "search_keywords": [
+        "apologize",
+        "sorry",
+        "excessive",
+        "blame",
+        "repair",
+        "quickly"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "conflict_repair_romance",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "repair_waits_for_other_first",
+      "insight_text": "You wait for the other person to initiate repair",
+      "domain": "relational_strategies",
+      "category": "Repair & Recovery",
+      "subcategory": "Passive Repair",
+      "subtype": "pattern",
+      "search_variants": [
+        "won't reach out first",
+        "waits for them to apologize",
+        "expects other to repair",
+        "holds position",
+        "waits to be approached",
+        "passive in repair",
+        "won't initiate reconnection",
+        "expects first move",
+        "standoff pattern",
+        "waits for outreach"
+      ],
+      "search_keywords": [
+        "wait",
+        "other",
+        "first",
+        "initiate",
+        "repair",
+        "reach out"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "conflict_repair_romance",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "repair_acts_normal_quickly",
+      "insight_text": "You move back to normal quickly, sometimes before feelings are processed",
+      "domain": "relational_strategies",
+      "category": "Repair & Recovery",
+      "subcategory": "Premature Normalcy",
+      "subtype": "pattern",
+      "search_variants": [
+        "quick return to normal",
+        "acts like nothing happened",
+        "skips repair conversation",
+        "moves on fast",
+        "pretends resolved",
+        "bypasses processing",
+        "fast normalcy",
+        "sweeps under rug",
+        "forward without resolution",
+        "avoids repair talk"
+      ],
+      "search_keywords": [
+        "normal",
+        "quickly",
+        "move on",
+        "skip",
+        "fast",
+        "pretend"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "conflict_repair_romance",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "repair_holds_grudge_unconsciously",
+      "insight_text": "You forgive consciously but the hurt lingers beneath the surface",
+      "domain": "relational_strategies",
+      "category": "Repair & Recovery",
+      "subcategory": "Incomplete Release",
+      "subtype": "pattern",
+      "search_variants": [
+        "forgives but doesn't forget",
+        "says it's fine but isn't",
+        "unconscious grudge holding",
+        "resentment persists",
+        "hurt stays underneath",
+        "incomplete forgiveness",
+        "superficial repair",
+        "emotional residue remains",
+        "says moved on but hasn't",
+        "unprocessed hurt lingers"
+      ],
+      "search_keywords": [
+        "forgive",
+        "grudge",
+        "linger",
+        "hurt",
+        "unconscious",
+        "remain"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "conflict_repair_romance",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "validation_needs_external_confirmation",
+      "insight_text": "You look for external confirmation that you're doing okay",
+      "domain": "relational_strategies",
+      "category": "Validation & Approval",
+      "subcategory": "Confirmation Seeking",
+      "subtype": "pattern",
+      "search_variants": [
+        "seeks reassurance constantly",
+        "needs external validation",
+        "checks if doing right",
+        "looks for approval",
+        "requires confirmation",
+        "external validation dependent",
+        "asks if okay frequently",
+        "needs positive feedback",
+        "seeks approval regularly",
+        "confirmation checking"
+      ],
+      "search_keywords": [
+        "validation",
+        "external",
+        "confirmation",
+        "approval",
+        "reassurance"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "validation_performs_for_acceptance",
+      "insight_text": "You shape yourself to what you think others want to see",
+      "domain": "relational_strategies",
+      "category": "Validation & Approval",
+      "subcategory": "Performance",
+      "subtype": "pattern",
+      "search_variants": [
+        "performs for acceptance",
+        "shapes to please",
+        "chameleon behavior",
+        "adapts to others",
+        "presents ideal self",
+        "performance for love",
+        "becomes what's wanted",
+        "masks true self",
+        "shapeshifting socially",
+        "performs acceptable version"
+      ],
+      "search_keywords": [
+        "perform",
+        "shape",
+        "adapt",
+        "acceptance",
+        "please",
+        "ideal"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "validation_checks_perception",
+      "insight_text": "You frequently check how you're coming across to others",
+      "domain": "relational_strategies",
+      "category": "Validation & Approval",
+      "subcategory": "Perception Monitoring",
+      "subtype": "pattern",
+      "search_variants": [
+        "monitors impression",
+        "checks how perceived",
+        "worried about coming across",
+        "self-conscious socially",
+        "perception anxiety",
+        "checks reception",
+        "monitors reactions",
+        "scans for judgment",
+        "worried about perception",
+        "impression management"
+      ],
+      "search_keywords": [
+        "check",
+        "perception",
+        "coming across",
+        "monitor",
+        "impression"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "validation_deflects_compliments",
+      "insight_text": "You deflect compliments or doubt their sincerity",
+      "domain": "relational_strategies",
+      "category": "Validation & Approval",
+      "subcategory": "Rejection of Positive",
+      "subtype": "pattern",
+      "search_variants": [
+        "dismisses compliments",
+        "can't accept praise",
+        "deflects positive feedback",
+        "doubts sincerity",
+        "minimizes accomplishments",
+        "uncomfortable with praise",
+        "rejects compliments",
+        "assumes flattery",
+        "can't receive appreciation",
+        "downplays achievements"
+      ],
+      "search_keywords": [
+        "deflect",
+        "compliment",
+        "praise",
+        "dismiss",
+        "doubt",
+        "reject"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "validation_earns_through_effort",
+      "insight_text": "You feel you have to earn acceptance through what you do",
+      "domain": "relational_strategies",
+      "category": "Validation & Approval",
+      "subcategory": "Conditional Acceptance",
+      "subtype": "pattern",
+      "search_variants": [
+        "earns love through doing",
+        "proves worth through effort",
+        "acceptance requires performance",
+        "must earn belonging",
+        "conditional acceptance belief",
+        "worth through achievement",
+        "accepted for doing not being",
+        "earns through contribution",
+        "valuable when productive",
+        "acceptance tied to output"
+      ],
+      "search_keywords": [
+        "earn",
+        "acceptance",
+        "effort",
+        "worth",
+        "prove",
+        "through"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "worth_conditional_on_performance",
+      "insight_text": "Your sense of worth rises and falls with how well you're doing",
+      "domain": "beliefs_assumptions",
+      "category": "Self-Worth Beliefs",
+      "subcategory": "Conditional Worth",
+      "subtype": "belief",
+      "search_variants": [
+        "worth tied to achievement",
+        "value depends on success",
+        "performance determines worth",
+        "only valuable when succeeding",
+        "worth fluctuates with outcomes",
+        "conditional self-worth",
+        "achievement-based value",
+        "worth through accomplishment",
+        "success defines worth",
+        "valuable when performing"
+      ],
+      "search_keywords": [
+        "worth",
+        "performance",
+        "achievement",
+        "success",
+        "conditional",
+        "value"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "worth_needs_to_be_exceptional",
+      "insight_text": "It's hard to feel 'enough' without being impressive",
+      "domain": "beliefs_assumptions",
+      "category": "Self-Worth Beliefs",
+      "subcategory": "Exceptionalism",
+      "subtype": "belief",
+      "search_variants": [
+        "must be exceptional",
+        "average feels inadequate",
+        "needs to stand out",
+        "ordinary not enough",
+        "impressive or worthless",
+        "exceptionalism belief",
+        "must be special",
+        "normal feels insufficient",
+        "needs to be remarkable",
+        "enough means exceptional"
+      ],
+      "search_keywords": [
+        "exceptional",
+        "impressive",
+        "enough",
+        "special",
+        "stand out",
+        "remarkable"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "worth_must_be_earned_not_given",
+      "insight_text": "You assume you have to earn your place rather than simply belong",
+      "domain": "beliefs_assumptions",
+      "category": "Self-Worth Beliefs",
+      "subcategory": "Earned Belonging",
+      "subtype": "belief",
+      "search_variants": [
+        "must earn belonging",
+        "acceptance not automatic",
+        "prove worth first",
+        "earn right to be here",
+        "belonging requires effort",
+        "conditional belonging",
+        "must justify existence",
+        "earn acceptance",
+        "deserve through doing",
+        "inclusion must be earned"
+      ],
+      "search_keywords": [
+        "earn",
+        "belong",
+        "place",
+        "deserve",
+        "prove",
+        "acceptance"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "worth_setbacks_are_personal",
+      "insight_text": "Setbacks land as statements about you, not just the situation",
+      "domain": "beliefs_assumptions",
+      "category": "Self-Worth Beliefs",
+      "subcategory": "Personalization",
+      "subtype": "belief",
+      "search_variants": [
+        "takes failures personally",
+        "setbacks feel personal",
+        "mistakes mean something",
+        "failure reflects self",
+        "outcomes say something about me",
+        "personalizes results",
+        "setbacks are judgments",
+        "failure is identity",
+        "mistakes reveal inadequacy",
+        "outcomes define self"
+      ],
+      "search_keywords": [
+        "setback",
+        "personal",
+        "failure",
+        "mistake",
+        "reflect",
+        "identity"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "worth_measured_through_comparison",
+      "insight_text": "You measure your worth against what others are doing",
+      "domain": "beliefs_assumptions",
+      "category": "Self-Worth Beliefs",
+      "subcategory": "Comparative Worth",
+      "subtype": "belief",
+      "search_variants": [
+        "compares to others constantly",
+        "relative worth assessment",
+        "measures against others",
+        "worth determined by comparison",
+        "better or worse than",
+        "competitive worth evaluation",
+        "others as measuring stick",
+        "relative value belief",
+        "comparison determines worth",
+        "ranking self constantly"
+      ],
+      "search_keywords": [
+        "compare",
+        "worth",
+        "others",
+        "measure",
+        "relative",
+        "better worse"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "responsibility_prevents_problems",
+      "insight_text": "You assume it's your job to prevent things from going wrong",
+      "domain": "beliefs_assumptions",
+      "category": "Responsibility Attribution",
+      "subcategory": "Preventive Responsibility",
+      "subtype": "belief",
+      "search_variants": [
+        "responsible for preventing",
+        "my job to stop problems",
+        "should have prevented",
+        "responsible for outcomes",
+        "anticipate and prevent",
+        "failure prevention duty",
+        "responsible for everything",
+        "should have seen coming",
+        "must prevent problems",
+        "responsibility for avoiding"
+      ],
+      "search_keywords": [
+        "responsibility",
+        "prevent",
+        "stop",
+        "problems",
+        "job",
+        "duty"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "responsibility_others_emotions",
+      "insight_text": "You feel responsible for other people's emotional experiences",
+      "domain": "beliefs_assumptions",
+      "category": "Responsibility Attribution",
+      "subcategory": "Emotional Responsibility",
+      "subtype": "belief",
+      "search_variants": [
+        "responsible for others' feelings",
+        "caused their upset",
+        "my fault they're hurt",
+        "manage others' emotions",
+        "responsible for happiness",
+        "should make them feel better",
+        "their feelings my responsibility",
+        "caused their distress",
+        "responsible for comfort",
+        "must fix their feelings"
+      ],
+      "search_keywords": [
+        "responsible",
+        "others",
+        "emotions",
+        "feelings",
+        "caused",
+        "fault"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "roles_labor_power",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "responsibility_should_have_known",
+      "insight_text": "You blame yourself for not anticipating problems",
+      "domain": "beliefs_assumptions",
+      "category": "Responsibility Attribution",
+      "subcategory": "Hindsight Responsibility",
+      "subtype": "belief",
+      "search_variants": [
+        "should have seen it coming",
+        "should have known better",
+        "could have prevented",
+        "obvious in hindsight",
+        "blames self for missing signs",
+        "should have anticipated",
+        "my fault for not knowing",
+        "should have predicted",
+        "responsible for not foreseeing",
+        "blames self for blindness"
+      ],
+      "search_keywords": [
+        "should have known",
+        "anticipated",
+        "predicted",
+        "seen coming",
+        "blame"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "responsibility_deflects_externally",
+      "insight_text": "You attribute difficulties to external circumstances rather than your role",
+      "domain": "beliefs_assumptions",
+      "category": "Responsibility Attribution",
+      "subcategory": "External Attribution",
+      "subtype": "belief",
+      "search_variants": [
+        "blames circumstances",
+        "not my fault",
+        "external factors responsible",
+        "deflects responsibility",
+        "situation caused it",
+        "others are responsible",
+        "circumstances to blame",
+        "external attribution",
+        "not about my choices",
+        "outside forces responsible"
+      ],
+      "search_keywords": [
+        "external",
+        "circumstances",
+        "blame",
+        "fault",
+        "deflect",
+        "others"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "responsibility_controls_to_prevent",
+      "insight_text": "You believe controlling situations prevents bad outcomes",
+      "domain": "beliefs_assumptions",
+      "category": "Responsibility Attribution",
+      "subcategory": "Control-Responsibility Link",
+      "subtype": "belief",
+      "search_variants": [
+        "control prevents problems",
+        "must control to avoid",
+        "control ensures safety",
+        "prevention through control",
+        "managing prevents failure",
+        "control reduces risk",
+        "oversight prevents mistakes",
+        "control equals prevention",
+        "vigilance prevents problems",
+        "control necessary for outcomes"
+      ],
+      "search_keywords": [
+        "control",
+        "prevent",
+        "avoid",
+        "manage",
+        "oversight",
+        "necessary"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "safety_uncertainty_equals_threat",
+      "insight_text": "Unclear situations start to feel unsafe or urgent",
+      "domain": "beliefs_assumptions",
+      "category": "Safety & Threat Perception",
+      "subcategory": "Uncertainty Intolerance",
+      "subtype": "belief",
+      "search_variants": [
+        "uncertainty feels threatening",
+        "ambiguity equals danger",
+        "unclear means unsafe",
+        "not knowing feels risky",
+        "ambiguity triggers anxiety",
+        "uncertainty as threat",
+        "needs clarity to feel safe",
+        "unknown equals danger",
+        "ambiguity intolerance",
+        "uncertain is unsafe"
+      ],
+      "search_keywords": [
+        "uncertainty",
+        "unclear",
+        "ambiguous",
+        "threat",
+        "unsafe",
+        "danger"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "safety_prepares_for_worst",
+      "insight_text": "You plan for worst-case scenarios to reduce anxiety",
+      "domain": "beliefs_assumptions",
+      "category": "Safety & Threat Perception",
+      "subcategory": "Catastrophic Planning",
+      "subtype": "belief",
+      "search_variants": [
+        "worst-case thinking",
+        "catastrophic planning",
+        "prepares for disaster",
+        "imagines worst outcomes",
+        "defensive pessimism",
+        "anticipates catastrophe",
+        "worst-case preparation",
+        "disaster planning",
+        "expects worst",
+        "protective catastrophizing"
+      ],
+      "search_keywords": [
+        "worst case",
+        "catastrophic",
+        "disaster",
+        "prepare",
+        "anticipate"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "safety_scans_for_problems",
+      "insight_text": "You scan for what might go wrong rather than what's going well",
+      "domain": "beliefs_assumptions",
+      "category": "Safety & Threat Perception",
+      "subcategory": "Threat Vigilance",
+      "subtype": "belief",
+      "search_variants": [
+        "looks for problems",
+        "scans for threats",
+        "vigilant for issues",
+        "watches for problems",
+        "hypervigilance pattern",
+        "threat detection focus",
+        "notices negatives",
+        "alert to danger",
+        "problem-focused attention",
+        "vigilance for wrong"
+      ],
+      "search_keywords": [
+        "scan",
+        "watch",
+        "vigilant",
+        "problems",
+        "threats",
+        "wrong"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "safety_certainty_required_to_act",
+      "insight_text": "You need to feel certain before taking action",
+      "domain": "beliefs_assumptions",
+      "category": "Safety & Threat Perception",
+      "subcategory": "Certainty Requirement",
+      "subtype": "belief",
+      "search_variants": [
+        "needs certainty to move",
+        "waits for clarity",
+        "must be sure first",
+        "acts only when certain",
+        "certainty before action",
+        "confidence required",
+        "waits for guarantees",
+        "needs assurance first",
+        "certainty prerequisite",
+        "can't act without knowing"
+      ],
+      "search_keywords": [
+        "certainty",
+        "certain",
+        "sure",
+        "act",
+        "move",
+        "clarity"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "safety_alert_for_changes",
+      "insight_text": "You stay alert for signs that situations are changing",
+      "domain": "beliefs_assumptions",
+      "category": "Safety & Threat Perception",
+      "subcategory": "Change Monitoring",
+      "subtype": "belief",
+      "search_variants": [
+        "monitors for shifts",
+        "watches for changes",
+        "alert to differences",
+        "tracks for changes",
+        "vigilant for shifts",
+        "notices variations",
+        "scans for differences",
+        "change detection focus",
+        "alert to instability",
+        "monitors consistency"
+      ],
+      "search_keywords": [
+        "alert",
+        "changes",
+        "shifts",
+        "monitor",
+        "watch",
+        "track"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "trust_expects_disappointment",
+      "insight_text": "You expect people to eventually let you down",
+      "domain": "beliefs_assumptions",
+      "category": "Trust & Expectation Beliefs",
+      "subcategory": "Disappointment Expectation",
+      "subtype": "belief",
+      "search_variants": [
+        "expects betrayal",
+        "anticipates disappointment",
+        "people always disappoint",
+        "expects let down",
+        "assumes eventual hurt",
+        "disappointment inevitable",
+        "prepared for betrayal",
+        "expects abandonment",
+        "assumes unreliability",
+        "people will leave"
+      ],
+      "search_keywords": [
+        "expect",
+        "disappointment",
+        "let down",
+        "betray",
+        "abandon",
+        "leave"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "trust_closeness_leads_to_hurt",
+      "insight_text": "You believe closeness eventually leads to hurt",
+      "domain": "beliefs_assumptions",
+      "category": "Trust & Expectation Beliefs",
+      "subcategory": "Intimacy Risk",
+      "subtype": "belief",
+      "search_variants": [
+        "intimacy leads to pain",
+        "closeness brings hurt",
+        "vulnerability equals hurt",
+        "intimacy is dangerous",
+        "closeness means eventual pain",
+        "love leads to loss",
+        "proximity brings hurt",
+        "attachment causes pain",
+        "nearness leads to hurt",
+        "intimacy risks pain"
+      ],
+      "search_keywords": [
+        "closeness",
+        "intimacy",
+        "hurt",
+        "pain",
+        "leads",
+        "vulnerability"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "trust_others_cant_handle_reality",
+      "insight_text": "You assume others can't handle your full reality",
+      "domain": "beliefs_assumptions",
+      "category": "Trust & Expectation Beliefs",
+      "subcategory": "Protective Assumption",
+      "subtype": "belief",
+      "search_variants": [
+        "too much for others",
+        "will overwhelm them",
+        "can't handle truth",
+        "too intense for others",
+        "will scare them away",
+        "burden to others",
+        "reality too much",
+        "authenticity overwhelms",
+        "full self too heavy",
+        "truth will push away"
+      ],
+      "search_keywords": [
+        "others",
+        "can't handle",
+        "too much",
+        "overwhelm",
+        "burden",
+        "reality"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "communication_vulnerability",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "trust_looks_for_proof_wrong",
+      "insight_text": "You look for evidence that your trust was misplaced",
+      "domain": "beliefs_assumptions",
+      "category": "Trust & Expectation Beliefs",
+      "subcategory": "Vigilant Mistrust",
+      "subtype": "belief",
+      "search_variants": [
+        "watches for betrayal",
+        "looks for red flags",
+        "vigilant for proof",
+        "expects trust broken",
+        "scans for evidence",
+        "confirmation seeking",
+        "watches for signs",
+        "alert to wrongness",
+        "proves suspicion",
+        "validates mistrust"
+      ],
+      "search_keywords": [
+        "proof",
+        "evidence",
+        "wrong",
+        "trust",
+        "betrayal",
+        "red flags"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "jealousy_attention_comparison",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "trust_given_foolishly",
+      "insight_text": "You believe trusting too easily makes you vulnerable to harm",
+      "domain": "beliefs_assumptions",
+      "category": "Trust & Expectation Beliefs",
+      "subcategory": "Trust as Weakness",
+      "subtype": "belief",
+      "search_variants": [
+        "trust is naive",
+        "trust equals weakness",
+        "trusting is dangerous",
+        "trust invites harm",
+        "trust makes vulnerable",
+        "easy trust is foolish",
+        "trust equals risk",
+        "openness invites hurt",
+        "trust without proof wrong",
+        "guarding necessary"
+      ],
+      "search_keywords": [
+        "trust",
+        "foolish",
+        "naive",
+        "vulnerable",
+        "harm",
+        "weakness"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "attachment_security",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "control_necessary_for_safety",
+      "insight_text": "You believe controlling situations prevents bad outcomes",
+      "domain": "beliefs_assumptions",
+      "category": "Control & Certainty Beliefs",
+      "subcategory": "Control Necessity",
+      "subtype": "belief",
+      "search_variants": [
+        "control prevents disaster",
+        "must control to avoid",
+        "control ensures safety",
+        "management prevents problems",
+        "control reduces risk",
+        "oversight necessary",
+        "control keeps safe",
+        "management equals safety",
+        "control prevents failure",
+        "vigilance prevents problems"
+      ],
+      "search_keywords": [
+        "control",
+        "necessary",
+        "prevent",
+        "safety",
+        "avoid",
+        "ensures"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "control_flexibility_is_chaos",
+      "insight_text": "Spontaneity feels risky rather than freeing",
+      "domain": "beliefs_assumptions",
+      "category": "Control & Certainty Beliefs",
+      "subcategory": "Rigidity Preference",
+      "subtype": "belief",
+      "search_variants": [
+        "spontaneity is dangerous",
+        "flexibility equals chaos",
+        "unplanned feels risky",
+        "structure necessary",
+        "spontaneous feels unsafe",
+        "needs predictability",
+        "improvisation is risk",
+        "deviation is danger",
+        "flexibility threatens control",
+        "spontaneity equals risk"
+      ],
+      "search_keywords": [
+        "spontaneity",
+        "flexibility",
+        "chaos",
+        "risky",
+        "dangerous",
+        "unplanned"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "control_planning_reduces_anxiety",
+      "insight_text": "Having a clear plan is how you feel secure",
+      "domain": "beliefs_assumptions",
+      "category": "Control & Certainty Beliefs",
+      "subcategory": "Planning as Security",
+      "subtype": "belief",
+      "search_variants": [
+        "planning equals safety",
+        "plans reduce anxiety",
+        "preparation brings calm",
+        "planning necessary for comfort",
+        "structure brings security",
+        "plans prevent worry",
+        "organization equals safety",
+        "preparation reduces threat",
+        "planning is protection",
+        "structure reduces anxiety"
+      ],
+      "search_keywords": [
+        "plan",
+        "planning",
+        "security",
+        "safe",
+        "anxiety",
+        "preparation"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "control_others_unreliable_without_oversight",
+      "insight_text": "You assume if you don't do it, it won't get done right",
+      "domain": "beliefs_assumptions",
+      "category": "Control & Certainty Beliefs",
+      "subcategory": "Delegation Mistrust",
+      "subtype": "belief",
+      "search_variants": [
+        "others won't do it right",
+        "can't trust others",
+        "must do it myself",
+        "delegation equals failure",
+        "others are unreliable",
+        "only I can do it properly",
+        "trust leads to mistakes",
+        "others will mess up",
+        "must oversee everything",
+        "delegation is risky"
+      ],
+      "search_keywords": [
+        "others",
+        "unreliable",
+        "myself",
+        "trust",
+        "delegation",
+        "oversight"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "control_letting_go_means_failure",
+      "insight_text": "You believe things will fall apart without your involvement",
+      "domain": "beliefs_assumptions",
+      "category": "Control & Certainty Beliefs",
+      "subcategory": "Indispensability Belief",
+      "subtype": "belief",
+      "search_variants": [
+        "needed to maintain things",
+        "will collapse without me",
+        "indispensable role",
+        "my involvement necessary",
+        "falls apart if I step back",
+        "required for success",
+        "absence means failure",
+        "necessary for functioning",
+        "without me things fail",
+        "must maintain involvement"
+      ],
+      "search_keywords": [
+        "fall apart",
+        "without",
+        "involvement",
+        "necessary",
+        "collapse",
+        "needed"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "fairness_tracks_contributions",
+      "insight_text": "You keep mental tallies of who contributed more",
+      "domain": "beliefs_assumptions",
+      "category": "Fairness & Justice Beliefs",
+      "subcategory": "Reciprocity Tracking",
+      "subtype": "belief",
+      "search_variants": [
+        "tracks who does more",
+        "keeps score",
+        "notices imbalance",
+        "counts contributions",
+        "mental tally keeping",
+        "reciprocity monitoring",
+        "notices inequity",
+        "scorekeeping pattern",
+        "tracks effort differences",
+        "balance awareness"
+      ],
+      "search_keywords": [
+        "track",
+        "tally",
+        "score",
+        "contributions",
+        "who",
+        "more"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": true,
+        "romance_subdomain": "roles_labor_power",
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "fairness_effort_should_equal_outcome",
+      "insight_text": "You believe effort should reliably lead to fair outcomes",
+      "domain": "beliefs_assumptions",
+      "category": "Fairness & Justice Beliefs",
+      "subcategory": "Meritocracy Belief",
+      "subtype": "belief",
+      "search_variants": [
+        "hard work should pay off",
+        "effort equals results",
+        "merit determines outcomes",
+        "work should be rewarded",
+        "fairness means meritocracy",
+        "effort guarantees success",
+        "just world belief",
+        "deserved outcomes",
+        "work equals reward",
+        "merit-based fairness"
+      ],
+      "search_keywords": [
+        "effort",
+        "outcome",
+        "merit",
+        "fair",
+        "work",
+        "reward"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "fairness_others_have_easier",
+      "insight_text": "You notice when others seem to have it easier",
+      "domain": "beliefs_assumptions",
+      "category": "Fairness & Justice Beliefs",
+      "subcategory": "Comparative Disadvantage",
+      "subtype": "belief",
+      "search_variants": [
+        "unfair advantage perception",
+        "others have it easier",
+        "notices inequity",
+        "disadvantaged comparatively",
+        "others get more",
+        "inequality awareness",
+        "unfair easier path",
+        "privileged others",
+        "harder for me than them",
+        "comparative unfairness"
+      ],
+      "search_keywords": [
+        "others",
+        "easier",
+        "unfair",
+        "advantage",
+        "inequality",
+        "harder"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "fairness_outcomes_should_match_merit",
+      "insight_text": "You're frustrated when outcomes don't match merit",
+      "domain": "beliefs_assumptions",
+      "category": "Fairness & Justice Beliefs",
+      "subcategory": "Justice Expectation",
+      "subtype": "belief",
+      "search_variants": [
+        "world should be fair",
+        "merit should determine",
+        "justice expectation",
+        "deserved outcomes",
+        "fairness should prevail",
+        "injustice frustration",
+        "merit-outcome mismatch",
+        "unfairness anger",
+        "should get what deserved",
+        "justice belief"
+      ],
+      "search_keywords": [
+        "outcomes",
+        "merit",
+        "fair",
+        "deserve",
+        "justice",
+        "should"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "fairness_deserves_more_recognition",
+      "insight_text": "You believe your efforts should be acknowledged more",
+      "domain": "beliefs_assumptions",
+      "category": "Fairness & Justice Beliefs",
+      "subcategory": "Recognition Entitlement",
+      "subtype": "belief",
+      "search_variants": [
+        "deserves more credit",
+        "efforts unacknowledged",
+        "under-appreciated",
+        "recognition deserved",
+        "contributions overlooked",
+        "should be noticed more",
+        "unrecognized effort",
+        "deserves acknowledgment",
+        "taken for granted",
+        "appreciation deficit"
+      ],
+      "search_keywords": [
+        "deserve",
+        "recognition",
+        "acknowledge",
+        "credit",
+        "appreciate",
+        "effort"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "standards_bar_keeps_rising",
+      "insight_text": "Once you meet a standard, you raise it higher",
+      "domain": "beliefs_assumptions",
+      "category": "Standards & Expectation Beliefs",
+      "subcategory": "Moving Goalposts",
+      "subtype": "belief",
+      "search_variants": [
+        "raises bar constantly",
+        "moving target",
+        "never enough achieved",
+        "goalpost shifting",
+        "escalating standards",
+        "bar always higher",
+        "achievement never sufficient",
+        "constantly raises expectations",
+        "success moves target",
+        "bar elevation pattern"
+      ],
+      "search_keywords": [
+        "bar",
+        "raise",
+        "higher",
+        "standard",
+        "goalpost",
+        "target"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "standards_mistakes_unacceptable",
+      "insight_text": "Mistakes feel more significant than they are",
+      "domain": "beliefs_assumptions",
+      "category": "Standards & Expectation Beliefs",
+      "subcategory": "Error Intolerance",
+      "subtype": "belief",
+      "search_variants": [
+        "mistakes are catastrophic",
+        "errors unacceptable",
+        "mistakes matter greatly",
+        "perfection required",
+        "no room for error",
+        "mistakes feel huge",
+        "error intolerance",
+        "flaws unacceptable",
+        "mistakes are failures",
+        "error catastrophizing"
+      ],
+      "search_keywords": [
+        "mistakes",
+        "error",
+        "unacceptable",
+        "catastrophic",
+        "perfection"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "standards_holds_self_higher",
+      "insight_text": "You hold yourself to higher standards than you hold others",
+      "domain": "beliefs_assumptions",
+      "category": "Standards & Expectation Beliefs",
+      "subcategory": "Self-Other Discrepancy",
+      "subtype": "belief",
+      "search_variants": [
+        "harder on self",
+        "self-standards higher",
+        "accepts others' flaws not own",
+        "double standard",
+        "harsher with self",
+        "others get grace I don't",
+        "self-expectations elevated",
+        "unequal standards",
+        "harder on myself",
+        "self-judgment harsher"
+      ],
+      "search_keywords": [
+        "higher",
+        "standards",
+        "self",
+        "others",
+        "harder",
+        "myself"
+      ],
+      "prevalence": "very_common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "standards_good_enough_feels_settling",
+      "insight_text": "'Good enough' feels like settling",
+      "domain": "beliefs_assumptions",
+      "category": "Standards & Expectation Beliefs",
+      "subcategory": "Excellence Requirement",
+      "subtype": "belief",
+      "search_variants": [
+        "good enough isn't acceptable",
+        "settling means failure",
+        "adequate feels insufficient",
+        "must be excellent",
+        "sufficient feels wrong",
+        "mediocrity unacceptable",
+        "good enough is compromising",
+        "excellence required",
+        "acceptable isn't enough",
+        "settling equals failure"
+      ],
+      "search_keywords": [
+        "good enough",
+        "settling",
+        "sufficient",
+        "acceptable",
+        "excellence"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    },
+    {
+      "slug": "standards_achievement_satisfaction_brief",
+      "insight_text": "Accomplishing something feels good briefly, then you're onto the next thing",
+      "domain": "beliefs_assumptions",
+      "category": "Standards & Expectation Beliefs",
+      "subcategory": "Hedonic Adaptation",
+      "subtype": "pattern",
+      "search_variants": [
+        "satisfaction doesn't last",
+        "accomplishment fleeting",
+        "brief satisfaction",
+        "quickly moves on",
+        "achievement doesn't satisfy",
+        "can't enjoy success",
+        "immediately seeks next",
+        "satisfaction evaporates",
+        "accomplishment short-lived",
+        "next goal immediately"
+      ],
+      "search_keywords": [
+        "accomplishment",
+        "brief",
+        "satisfaction",
+        "next",
+        "fleeting",
+        "moves on"
+      ],
+      "prevalence": "common",
+      "context_tags": {
+        "romantic_context": false,
+        "romance_subdomain": null,
+        "is_romance_exclusive": false
+      }
+    }
+  ]
+}
