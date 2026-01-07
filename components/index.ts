@@ -35,6 +35,7 @@ export { DomainCard } from './map/domain-card';
 export { LandingScreen } from './screens/landing-screen';
 export { ChatScreen } from './screens/chat-screen';
 export { MapScreen } from './screens/map-screen';
+export { RomanceModuleScreen } from './screens/romance-module-screen';
 export { InsightsScreen } from './screens/insights-screen';
 export { ThreadsListScreen } from './screens/threads-list-screen';
 export { ThreadDetailScreen } from './screens/thread-detail-screen';
