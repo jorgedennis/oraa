@@ -206,11 +206,36 @@ export function MapScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.intro}>
-            Your Map is Oraa's understanding of you across five domains. 
+            Your Map is Oraa's understanding of you across six core domains. 
             Self insights are portable patterns that apply across different areas of your life.
         </Text>
         
-        <View style={styles.domainList}>
+        {/* Deep Dives Section */}
+        <View style={styles.deepDivesSection}>
+          <Text style={styles.sectionTitle}>Deep Dives</Text>
+          <TouchableOpacity 
+            style={styles.deepDiveCard}
+            activeOpacity={0.7}
+            onPress={() => {
+              // TODO: Navigate to Romance & Love module view
+              console.log('Navigate to Romance & Love module');
+            }}
+          >
+            <View style={styles.deepDiveContent}>
+              <Text style={styles.deepDiveIcon}>💕</Text>
+              <View style={styles.deepDiveText}>
+                <Text style={styles.deepDiveTitle}>Romance & Love</Text>
+                <Text style={styles.deepDiveSubtitle}>View relationship patterns</Text>
+              </View>
+            </View>
+            <Text style={styles.deepDiveChevron}>›</Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Core Domains Section */}
+        <View style={styles.coreDomainsSection}>
+          <Text style={styles.sectionTitle}>Core Domains</Text>
+          <View style={styles.domainList}>
             {mapInsights.map((domain) => (
               <DomainCard 
                 key={domain.domain_id} 
@@ -218,7 +243,8 @@ export function MapScreen() {
                 onInsightPress={handleInsightPress}
                 onDeleteInsight={handleDeleteInsight}
               />
-          ))}
+            ))}
+          </View>
         </View>
           
           {totalInsights === 0 && (
@@ -301,6 +327,55 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: OraaColors.textSub,
     marginBottom: 20,
+  },
+  deepDivesSection: {
+    marginBottom: 32,
+  },
+  coreDomainsSection: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: OraaColors.text,
+    marginBottom: 12,
+  },
+  deepDiveCard: {
+    backgroundColor: OraaColors.surface,
+    borderWidth: 1,
+    borderColor: OraaColors.stroke,
+    borderRadius: Radii.xl,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    ...Shadows.soft,
+  },
+  deepDiveContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  deepDiveIcon: {
+    fontSize: 24,
+  },
+  deepDiveText: {
+    flex: 1,
+  },
+  deepDiveTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: OraaColors.text,
+    marginBottom: 2,
+  },
+  deepDiveSubtitle: {
+    fontSize: 13,
+    color: OraaColors.textMuted,
+  },
+  deepDiveChevron: {
+    fontSize: 20,
+    color: OraaColors.textMuted,
   },
   domainList: {
     gap: 12,

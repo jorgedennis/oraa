@@ -227,14 +227,14 @@ const generateDummyStagingQueue = (): StagedItem[] => [
 // Generate dummy Map insights for testing
 const generateDummyMapInsights = (): DomainWithInsights[] => [
   {
-    domain_id: 'relational',
-    domain_name: 'Relational',
-    domain_icon: '🤝',
+    domain_id: 'beliefs_assumptions',
+    domain_name: 'Beliefs & Assumptions',
+    domain_icon: '🧭',
     insights: [
       {
         id: 'i1',
         observation: 'You tend to anticipate others\' needs before they ask',
-        domain_id: 'relational',
+        domain_id: 'beliefs_assumptions',
         user_response: 'yes',
         first_detected_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 5,
@@ -250,7 +250,7 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
       {
         id: 'i2',
         observation: 'Conflict avoidance has sometimes led to resentment building up',
-        domain_id: 'relational',
+        domain_id: 'beliefs_assumptions',
         user_response: 'maybe',
         user_note: 'Sometimes, but I think I\'m getting better at catching myself.',
         first_detected_at: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
@@ -266,14 +266,14 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
     ],
   },
   {
-    domain_id: 'emotional',
-    domain_name: 'Emotional',
+    domain_id: 'emotional_processing',
+    domain_name: 'Emotional Processing',
     domain_icon: '💙',
     insights: [
       {
         id: 'i3',
         observation: 'Guilt tends to follow situations where you prioritize your needs over others\' expectations',
-        domain_id: 'emotional',
+        domain_id: 'emotional_processing',
         user_response: 'yes',
         first_detected_at: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 4,
@@ -288,14 +288,14 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
     ],
   },
   {
-    domain_id: 'cognitive',
-    domain_name: 'Cognitive',
-    domain_icon: '🧠',
+    domain_id: 'coping_strategies',
+    domain_name: 'Coping Strategies',
+    domain_icon: '🛡️',
     insights: [
       {
         id: 'i4',
         observation: 'You process big decisions by talking them through out loud, even when you\'ve already made up your mind',
-        domain_id: 'cognitive',
+        domain_id: 'coping_strategies',
         user_response: 'yes',
         first_detected_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 7,
@@ -308,16 +308,15 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
     ],
   },
   {
-    domain_id: 'somatic',
-    domain_name: 'Somatic',
-    domain_icon: '🫀',
+    domain_id: 'relational_strategies',
+    domain_name: 'Relational Strategies',
+    domain_icon: '🤝',
     insights: [
       {
         id: 'i5',
-        observation: 'Guilt shows up as physical tension in your chest',
-        domain_id: 'somatic',
+        observation: 'You tend to smooth over tension instead of naming it directly',
+        domain_id: 'relational_strategies',
         user_response: 'yes',
-        user_note: 'Yes, especially in my shoulders. I notice it after the fact usually.',
         first_detected_at: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 6,
         acknowledged_at: new Date(Date.now() - 33 * 24 * 60 * 60 * 1000).toISOString(),
@@ -325,32 +324,55 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
           { thread_id: 'thread-1', thread_title: 'Mom', detected_at: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString() },
         ],
         is_novel: false,
-        template_id: 'guilt-chest-tension',
+        template_id: 'conflict-smooths-over-tension',
         promotion_reason: 'cross_session_recurrence',
       },
       {
         id: 'i6',
-        observation: 'Stress manifests physically before you consciously recognize it—tight chest, shallow breathing',
-        domain_id: 'somatic',
+        observation: 'When conflict gets intense, you go quiet and withdraw',
+        domain_id: 'relational_strategies',
         user_response: 'no', // Example of a dismissed insight
         first_detected_at: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 4,
         acknowledged_at: new Date(Date.now() - 48 * 24 * 60 * 60 * 1000).toISOString(),
         thread_associations: [],
         is_novel: false,
-        template_id: 'somatic-stress-awareness',
+        template_id: 'conflict-shuts-down-withdraws',
       },
     ],
   },
   {
-    domain_id: 'behavioral',
-    domain_name: 'Behavioral',
-    domain_icon: '⚡',
+    domain_id: 'somatic_regulation',
+    domain_name: 'Somatic Regulation',
+    domain_icon: '🫀',
     insights: [
       {
         id: 'i7',
+        observation: 'Guilt shows up as physical tension in your chest',
+        domain_id: 'somatic_regulation',
+        user_response: 'yes',
+        user_note: 'Yes, especially in my shoulders. I notice it after the fact usually.',
+        first_detected_at: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(),
+        detection_count: 3,
+        acknowledged_at: new Date(Date.now() - 38 * 24 * 60 * 60 * 1000).toISOString(),
+        thread_associations: [
+          { thread_id: 'thread-1', thread_title: 'Mom', detected_at: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString() },
+        ],
+        is_novel: false,
+        template_id: 'guilt-chest-tension',
+        promotion_reason: 'cross_session_recurrence',
+      },
+    ],
+  },
+  {
+    domain_id: 'agency_follow_through',
+    domain_name: 'Agency & Follow-Through',
+    domain_icon: '⚡',
+    insights: [
+      {
+        id: 'i8',
         observation: 'You tend to over-function in relationships when you sense the other person pulling away',
-        domain_id: 'behavioral',
+        domain_id: 'agency_follow_through',
         user_response: 'yes',
         first_detected_at: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 3,
