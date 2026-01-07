@@ -22,9 +22,20 @@ function DomainCard({ domain, onInsightPress, onDeleteInsight }: DomainCardProps
   const activeInsights = domain.insights.filter(i => i.user_response !== 'no');
   const dismissedInsights = domain.insights.filter(i => i.user_response === 'no');
   
+  // Group insights by category
+  const insightsByCategory: Record<string, SelfInsight[]> = {};
+  activeInsights.forEach(insight => {
+    const categoryKey = insight.category_name || insight.subcategory || 'Other';
+    if (!insightsByCategory[categoryKey]) {
+      insightsByCategory[categoryKey] = [];
+    }
+    insightsByCategory[categoryKey].push(insight);
+  });
+  
   const activeCount = activeInsights.length;
   const dismissedCount = dismissedInsights.length;
   const totalCount = domain.insights.length;
+  const categoryKeys = Object.keys(insightsByCategory);
   
   return (
     <View style={styles.domainCard}>
@@ -52,46 +63,53 @@ function DomainCard({ domain, onInsightPress, onDeleteInsight }: DomainCardProps
             <Text style={styles.emptyDomain}>No insights in this domain yet.</Text>
           ) : (
             <>
-              {/* Active insights */}
-              {activeInsights.map((insight) => (
-                <TouchableOpacity
-                  key={insight.id}
-                  style={styles.insightItem}
-                  onPress={() => onInsightPress(insight)}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.insightContent}>
-                    <Text style={styles.insightText}>{insight.observation}</Text>
-                    <View style={styles.insightMeta}>
-                      {insight.user_response && (
-                        <View style={[
-                          styles.responseBadge,
-                          insight.user_response === 'yes' && styles.responseBadgeYes,
-                          insight.user_response === 'maybe' && styles.responseBadgeMaybe,
-                        ]}>
-                          <Text style={[
-                            styles.responseBadgeText,
-                            insight.user_response === 'yes' && styles.responseBadgeTextYes,
-                            insight.user_response === 'maybe' && styles.responseBadgeTextMaybe,
-                          ]}>
-                            {insight.user_response === 'yes' ? 'Agreed' : 'Maybe'}
-                          </Text>
+              {/* Grouped by category */}
+              {categoryKeys.map((categoryKey) => (
+                <View key={categoryKey} style={styles.categoryGroup}>
+                  {categoryKeys.length > 1 && (
+                    <Text style={styles.categoryLabel}>{categoryKey}</Text>
+                  )}
+                  {insightsByCategory[categoryKey].map((insight) => (
+                    <TouchableOpacity
+                      key={insight.id}
+                      style={styles.insightItem}
+                      onPress={() => onInsightPress(insight)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.insightContent}>
+                        <Text style={styles.insightText}>{insight.observation}</Text>
+                        <View style={styles.insightMeta}>
+                          {insight.user_response && (
+                            <View style={[
+                              styles.responseBadge,
+                              insight.user_response === 'yes' && styles.responseBadgeYes,
+                              insight.user_response === 'maybe' && styles.responseBadgeMaybe,
+                            ]}>
+                              <Text style={[
+                                styles.responseBadgeText,
+                                insight.user_response === 'yes' && styles.responseBadgeTextYes,
+                                insight.user_response === 'maybe' && styles.responseBadgeTextMaybe,
+                              ]}>
+                                {insight.user_response === 'yes' ? 'Agreed' : 'Maybe'}
+                              </Text>
+                            </View>
+                          )}
+                          {insight.is_novel && (
+                            <View style={styles.novelBadge}>
+                              <Text style={styles.novelBadgeText}>Unique</Text>
+                            </View>
+                          )}
+                          {insight.thread_associations.length > 0 && (
+                            <Text style={styles.threadCount}>
+                              {insight.thread_associations.length} {insight.thread_associations.length === 1 ? 'thread' : 'threads'}
+                            </Text>
+                          )}
                         </View>
-                      )}
-                      {insight.is_novel && (
-                        <View style={styles.novelBadge}>
-                          <Text style={styles.novelBadgeText}>Unique</Text>
-                        </View>
-                      )}
-                      {insight.thread_associations.length > 0 && (
-                        <Text style={styles.threadCount}>
-                          {insight.thread_associations.length} {insight.thread_associations.length === 1 ? 'thread' : 'threads'}
-                        </Text>
-                      )}
-                    </View>
-                  </View>
-                  <Text style={styles.chevron}>›</Text>
-                </TouchableOpacity>
+                      </View>
+                      <Text style={styles.chevron}>›</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               ))}
               
               {/* Dismissed insights toggle */}
@@ -217,8 +235,7 @@ export function MapScreen() {
             style={styles.deepDiveCard}
             activeOpacity={0.7}
             onPress={() => {
-              // TODO: Navigate to Romance & Love module view
-              console.log('Navigate to Romance & Love module');
+              router.push('/(drawer)/romance');
             }}
           >
             <View style={styles.deepDiveContent}>
@@ -559,5 +576,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     maxWidth: 280,
     lineHeight: 20,
+  },
+  categoryGroup: {
+    marginBottom: 8,
+  },
+  categoryLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: OraaColors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    paddingHorizontal: 14,
+    paddingTop: 12,
+    paddingBottom: 6,
   },
 });

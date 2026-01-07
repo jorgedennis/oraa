@@ -61,6 +61,13 @@ export default function DrawerLayout() {
             title: 'Settings',
           }}
         />
+        <Drawer.Screen
+          name="romance"
+          options={{
+            drawerLabel: 'Romance & Love',
+            title: 'Romance & Love',
+          }}
+        />
       </Drawer>
     </GestureHandlerRootView>
   );

@@ -57,6 +57,9 @@ export interface SelfInsight {
   id: string;
   observation: string;
   domain_id: string;
+  category_id?: string;
+  category_name?: string;
+  subcategory?: string;
   user_response?: InsightResponse;
   user_note?: string;
   first_detected_at: string;
@@ -235,6 +238,7 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         id: 'i1',
         observation: 'You tend to anticipate others\' needs before they ask',
         domain_id: 'beliefs_assumptions',
+        category_name: 'Self-Worth',
         user_response: 'yes',
         first_detected_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 5,
@@ -251,6 +255,7 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         id: 'i2',
         observation: 'Conflict avoidance has sometimes led to resentment building up',
         domain_id: 'beliefs_assumptions',
+        category_name: 'Responsibility',
         user_response: 'maybe',
         user_note: 'Sometimes, but I think I\'m getting better at catching myself.',
         first_detected_at: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
@@ -274,6 +279,7 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         id: 'i3',
         observation: 'Guilt tends to follow situations where you prioritize your needs over others\' expectations',
         domain_id: 'emotional_processing',
+        category_name: 'Awareness',
         user_response: 'yes',
         first_detected_at: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 4,
@@ -296,6 +302,7 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         id: 'i4',
         observation: 'You process big decisions by talking them through out loud, even when you\'ve already made up your mind',
         domain_id: 'coping_strategies',
+        category_name: 'Reassurance & External Support',
         user_response: 'yes',
         first_detected_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 7,
@@ -316,6 +323,8 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         id: 'i5',
         observation: 'You tend to smooth over tension instead of naming it directly',
         domain_id: 'relational_strategies',
+        category_name: 'Conflict Navigation',
+        subcategory: 'Smoothing',
         user_response: 'yes',
         first_detected_at: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 6,
@@ -331,6 +340,8 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         id: 'i6',
         observation: 'When conflict gets intense, you go quiet and withdraw',
         domain_id: 'relational_strategies',
+        category_name: 'Conflict Navigation',
+        subcategory: 'Withdrawal',
         user_response: 'no', // Example of a dismissed insight
         first_detected_at: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 4,
@@ -350,6 +361,7 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         id: 'i7',
         observation: 'Guilt shows up as physical tension in your chest',
         domain_id: 'somatic_regulation',
+        category_name: 'Tension',
         user_response: 'yes',
         user_note: 'Yes, especially in my shoulders. I notice it after the fact usually.',
         first_detected_at: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(),
@@ -373,6 +385,7 @@ const generateDummyMapInsights = (): DomainWithInsights[] => [
         id: 'i8',
         observation: 'You tend to over-function in relationships when you sense the other person pulling away',
         domain_id: 'agency_follow_through',
+        category_name: 'Initiation',
         user_response: 'yes',
         first_detected_at: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(),
         detection_count: 3,
